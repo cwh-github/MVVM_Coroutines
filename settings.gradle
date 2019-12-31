@@ -1,0 +1,2 @@
+include ':app', ':mvvm_coroutines_base'
+rootProject.name='MVVM_Coroutines'
