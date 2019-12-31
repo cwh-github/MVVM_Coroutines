@@ -6,6 +6,5 @@ package com.cwh.mvvm_coroutines_base.base.binding.command
  * Author: cwh
  */
 interface BindingFunction<T>{
-
     fun call():T
 }
