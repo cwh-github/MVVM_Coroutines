@@ -12,6 +12,9 @@ import com.cwh.mvvm_coroutines_base.base.Event
 import com.cwh.mvvm_coroutines_base.base.ExceptionHandle
 import com.cwh.mvvm_coroutines_base.base.repository.IRepository
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 
 /**
  * Description:BaseViewModel 主要的数据逻辑操作在ViewModel中执行
@@ -29,7 +32,7 @@ abstract class BaseViewModel<T : IRepository>(application: Application) :
 
     val mDefUIEvent = DefUIEvent()
 
-    private fun launchOnUI(block: suspend CoroutineScope.() -> Unit) {
+    protected fun launchOnUI(block: suspend CoroutineScope.() -> Unit) {
         viewModelScope.launch {
             block()
         }
@@ -113,21 +116,21 @@ abstract class BaseViewModel<T : IRepository>(application: Application) :
      * 对于Retrofit中使用时，在Service中定义的挂起函数在被调用时
      * 会自动挂起到子线程执行，我们不需要再切换到子线程
      *
+     * @param isLaunchOnIO 是否在IO线程运行Block(默认在主线程运行)
      * @param onStart 开始前的处理
-     * @param block 需要处理的逻辑
+     * @param block 需要处理的逻辑(包括数据的请求和UI逻辑的处理)
      * @param onError 出现Exception时的逻辑
      * @param onComplete 不管处理成功或出现异常后的处理逻辑
-     * @param isLaunchOnIO 是否在IO线程运行Block(默认在主线程运行)
      *
      */
     fun launch(
+        isLaunchOnIO: Boolean = false,
         onStart: () -> Unit = {},
         block: suspend CoroutineScope.() -> Unit,
         onError: (ExceptionHandle.ResponseThrowable) -> Unit = {
             mDefUIEvent.mToastEvent.value = Event("${it.code} : ${it.message}")
         },
-        onComplete: () -> Unit,
-        isLaunchOnIO: Boolean = false
+        onComplete: () -> Unit
     ) {
         launchOnUI {
             handleException({
@@ -154,25 +157,28 @@ abstract class BaseViewModel<T : IRepository>(application: Application) :
      * 对于Retrofit中使用时，在Service中定义的挂起函数在被调用时
      * 会自动挂起到子线程执行，我们不需要再切换到子线程
      *
+     * @param isLaunchOnIO 是否在IO线程运行Block(默认在主线程运行)
      * @param onStart 开始前的处理
      * @param block 需要处理的逻辑
      * @param onSuccess 对于请求成功结果的处理，返回结果成功，对于成功结果的处理
      * @param onFail 对于请求成功，返回失败结果的处理
      * @param onError 出现Exception时的逻辑
      * @param onComplete 不管处理成功或出现异常后的处理逻辑
-     * @param isLaunchOnIO 是否在IO线程运行Block(默认在主线程运行)
+     *
      *
      */
     fun <R> launch(
+        isLaunchOnIO: Boolean = false,
         onStart: () -> Unit = {},
         block: suspend CoroutineScope.() -> Entity<R>,
         onSuccess: (R) -> Unit,
-        onFail: (String, Int) -> Unit,
+        onFail: (String, Int) -> Unit = { msg, _ ->
+            mDefUIEvent.mToastEvent.value = Event(msg)
+        },
         onError: (ExceptionHandle.ResponseThrowable) -> Unit = {
             mDefUIEvent.mToastEvent.value = Event("${it.code} : ${it.message}")
         },
-        onComplete: () -> Unit,
-        isLaunchOnIO: Boolean = false
+        onComplete: () -> Unit
     ) {
         launchOnUI {
             handleException({
@@ -197,6 +203,32 @@ abstract class BaseViewModel<T : IRepository>(application: Application) :
             })
         }
 
+    }
+
+
+    /**
+     * 返回Flows数据，可以进行类似于RxJava的
+     * 一系列操作符对数据进行操作
+     *
+     * 如：flow{
+             emit(block())
+            }.flowOn(Dispatchers.IO).map{}
+
+     * 对于使用该方法，需要在协程作用域中使用，
+     * (含有suspend函数)
+     *
+     *  在主线程的协程中使用即可，需要切到其他线程，通过flowOn即可
+     *  launchOnUI{
+     *      launchFlow{
+     *
+     *      }.flowOn(Dispatchers.IO).map{}
+     *  }
+     *
+     */
+    fun <R> launchFlow(block: suspend () -> R):Flow<R> {
+        return flow{
+            emit(block())
+        }
     }
 
 
