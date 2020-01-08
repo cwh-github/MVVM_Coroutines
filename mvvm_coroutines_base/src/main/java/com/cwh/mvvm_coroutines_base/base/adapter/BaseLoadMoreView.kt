@@ -11,7 +11,7 @@ import androidx.core.view.isVisible
  */
 abstract class BaseLoadMoreView constructor(val context: Context) {
 
-    private var mStatus: LoadMoreStatus = LoadMoreStatus.LOADING
+    public var mStatus: LoadMoreStatus = LoadMoreStatus.LOADING
     /**
      * 获取加载更多数据的View
      */

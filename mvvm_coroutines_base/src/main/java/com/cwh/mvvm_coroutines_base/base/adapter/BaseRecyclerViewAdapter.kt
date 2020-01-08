@@ -3,6 +3,7 @@ package com.cwh.mvvm_coroutines_base.base.adapter
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewParent
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
@@ -308,11 +309,79 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: Muta
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        TODO()
+        return when (viewType) {
+
+            HEADER_VIEW -> {
+                val parent: ViewParent? = mHeadViews.parent
+                if (parent is ViewGroup) {
+                    parent.removeView(mHeadViews)
+                }
+                HeaderViewHolder(mHeadViews)
+            }
+
+            EMPTY_VIEW -> {
+                val parent: ViewParent? = mEmptyView.parent
+                if (parent is ViewGroup) {
+                    parent.removeView(mEmptyView)
+                }
+                EmptyViewHolder(mEmptyView)
+            }
+
+            FOOTER_VIEW -> {
+                val parent: ViewParent? = mFooterViews.parent
+                if (parent is ViewGroup) {
+                    parent.removeView(mFooterViews)
+                }
+                FooterViewHolder(mFooterViews)
+
+            }
+
+            LOAD_MORE_VIEW -> {
+                val rootView = mLoadMoreView.getRootView()
+                LoadMoreViewHolder(rootView)
+            }
+
+            else -> {
+                onCreateContentViewHolder(parent, viewType)
+            }
+        }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        TODO()
+        when (holder.itemViewType) {
+            HEADER_VIEW -> {
+            }
+            EMPTY_VIEW -> {
+            }
+            FOOTER_VIEW -> {
+            }
+            LOAD_MORE_VIEW -> {
+                val mViewHolder = holder as
+                        LoadMoreViewHolder
+                when (mLoadMoreView.mStatus){
+                    LoadMoreStatus.LOADING->{
+                        mLoadMoreView.showLoadingView()
+                    }
+
+                    LoadMoreStatus.SUCCESS->{
+                        mLoadMoreView.showLoadSuccessView()
+                    }
+
+                    LoadMoreStatus.FAIL->{
+                        mLoadMoreView.showLoadFailView()
+                    }
+
+                    LoadMoreStatus.NO_MORE_DATA->{
+                        mLoadMoreView.showNoMoreDataView()
+                    }
+                }
+
+
+            }
+            else -> {
+                onBindContentViewHolder(holder, position)
+            }
+        }
     }
 
     /**
@@ -336,4 +405,17 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: Muta
      */
     abstract fun onBindContentViewHolder(holder: RecyclerView.ViewHolder, position: Int)
 
+
 }
+
+//HeaderView ViewHolder
+class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+
+//FooterView ViewHolder
+class FooterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+
+//EmptyView ViewHolder
+class EmptyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+
+//LoadMoreView ViewHolder
+class LoadMoreViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
