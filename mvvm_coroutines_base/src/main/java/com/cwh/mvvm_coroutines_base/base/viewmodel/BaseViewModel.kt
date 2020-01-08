@@ -1,19 +1,17 @@
 package com.cwh.mvvm_coroutines_base.base.viewmodel
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.cwh.mvvm_coroutines_base.REQ_SUC
-import com.cwh.mvvm_coroutines_base.Utils.LogUtils
+import com.cwh.mvvm_coroutines_base.utils.LogUtils
 import com.cwh.mvvm_coroutines_base.base.Entity
 import com.cwh.mvvm_coroutines_base.base.Event
 import com.cwh.mvvm_coroutines_base.base.ExceptionHandle
 import com.cwh.mvvm_coroutines_base.base.repository.IRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 
 /**

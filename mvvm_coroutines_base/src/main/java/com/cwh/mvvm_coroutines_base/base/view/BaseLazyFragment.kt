@@ -1,5 +1,12 @@
 package com.cwh.mvvm_coroutines_base.base.view
 
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.databinding.ViewDataBinding
+import com.cwh.mvvm_coroutines_base.base.viewmodel.BaseViewModel
+
 /**
  * Description:懒加载Fragment 结合setMaxLife()方法一起使用
  * 对于FragmentPagerAdapter 需要设置参数 BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT，
@@ -10,5 +17,47 @@ package com.cwh.mvvm_coroutines_base.base.view
  * Date：2019/12/31 0031-15:00
  * Author: cwh
  */
-abstract class BaseLazyFragment : BaseFragment() {
+abstract class BaseLazyFragment<VM : BaseViewModel<*>, V : ViewDataBinding> :
+    BaseFragment<VM, V>() {
+
+    /**
+     * 是否是第一次对于用户可见
+     */
+    private var isFirstVisible: Boolean = true
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        isFirstVisible = true
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
+
+    //onViewCreated -> onStart -> onResume
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (isFirstVisible) {
+            onFragmentFirstVisible()
+            isFirstVisible = false
+        }
+
+        onFragmentVisibleToUser()
+
+    }
+
+    /**
+     * Fragment第一次对于用户可见
+     */
+    abstract fun onFragmentFirstVisible()
+
+    /**
+     * Fragment对于用户可见时
+     */
+    abstract fun onFragmentVisibleToUser()
+
 }

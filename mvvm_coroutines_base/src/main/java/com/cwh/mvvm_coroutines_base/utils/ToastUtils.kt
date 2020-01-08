@@ -1,4 +1,4 @@
-package com.cwh.mvvm_coroutines_base.Utils
+package com.cwh.mvvm_coroutines_base.utils
 
 import android.content.Context
 import android.view.Gravity

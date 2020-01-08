@@ -17,7 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
-import com.cwh.mvvm_coroutines_base.Utils.ToastUtils
+import com.cwh.mvvm_coroutines_base.utils.ToastUtils
 import com.cwh.mvvm_coroutines_base.base.observerEvent
 import com.cwh.mvvm_coroutines_base.base.viewmodel.BaseViewModel
 import java.lang.reflect.ParameterizedType
