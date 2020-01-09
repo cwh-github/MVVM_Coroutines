@@ -6,7 +6,10 @@ import android.view.ViewGroup
 import android.view.ViewParent
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.cwh.mvvm_coroutines_base.base.click
 
 /**
  * Description:
@@ -57,6 +60,26 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: Muta
      * 加载更多的View,在不需要加载更多时，不设置即可
      */
     private lateinit var mLoadMoreView: BaseLoadMoreView
+
+    /**
+     * 是否正在加载更多中的状态
+     */
+    private var mIsLoading = false
+
+    /**
+     * 加载更多监听
+     */
+    lateinit var onLoadMoreListener: () -> Unit
+
+    /**
+     * 是否显示加载更多,并开启加载更多功能
+     */
+    private var isEnableLoadMore = false
+
+    /**
+     * 是否在没有更多数据时，隐藏加载更多，并取消加载更多功能
+     */
+    private var isNoMoreDataGo = false
 
     /**
      * 添加Head View
@@ -161,7 +184,15 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: Muta
      * 是否拥有LoadMoreView
      */
     fun hasLoadMoreView(): Boolean {
-        return (::mLoadMoreView.isInitialized)
+        if (!::mLoadMoreView.isInitialized || !isEnableLoadMore) {
+            return false
+        }
+
+        if (mLoadMoreView.mStatus == LoadMoreStatus.NO_MORE_DATA && isNoMoreDataGo) {
+            return false
+        }
+
+        return true
     }
 
     /**
@@ -214,6 +245,7 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: Muta
             mLoadMoreView = loadMoreView
         }
         if (!hasLoadMoreView() && !hasEmptyView()) {
+            isEnableLoadMore = true
             notifyItemInserted(itemCount)
         }
     }
@@ -358,21 +390,51 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: Muta
             LOAD_MORE_VIEW -> {
                 val mViewHolder = holder as
                         LoadMoreViewHolder
-                when (mLoadMoreView.mStatus){
-                    LoadMoreStatus.LOADING->{
+                when (mLoadMoreView.mStatus) {
+                    LoadMoreStatus.LOADING -> {
                         mLoadMoreView.showLoadingView()
+                        if (!mIsLoading) {
+                            mIsLoading = true
+                            if (::onLoadMoreListener.isInitialized) {
+                                onLoadMoreListener()
+                            }
+                        }
                     }
 
-                    LoadMoreStatus.SUCCESS->{
+                    LoadMoreStatus.SUCCESS -> {
                         mLoadMoreView.showLoadSuccessView()
+                        if (!mIsLoading) {
+                            mIsLoading = true
+                            mLoadMoreView.showLoadingView()
+                            if (::onLoadMoreListener.isInitialized) {
+                                onLoadMoreListener()
+                            }
+                        } else {
+                            mLoadMoreView.showLoadingView()
+                        }
                     }
 
-                    LoadMoreStatus.FAIL->{
+                    LoadMoreStatus.FAIL -> {
                         mLoadMoreView.showLoadFailView()
+                        val loadFailView = mLoadMoreView.getLoadFailView()
+                        loadFailView.click {
+                            if (!mIsLoading) {
+                                mIsLoading = true
+                                mLoadMoreView.showLoadingView()
+                                if (::onLoadMoreListener.isInitialized) {
+                                    onLoadMoreListener()
+                                }
+                            } else {
+                                mLoadMoreView.showLoadingView()
+                            }
+
+                        }
+
                     }
 
-                    LoadMoreStatus.NO_MORE_DATA->{
+                    LoadMoreStatus.NO_MORE_DATA -> {
                         mLoadMoreView.showNoMoreDataView()
+                        mIsLoading = false
                     }
                 }
 
@@ -384,8 +446,225 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: Muta
         }
     }
 
+    //对于GridLayoutManager ,Head Empty Foot Load More,设置为单独占一行或一列
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        val layoutManager = recyclerView.layoutManager
+        layoutManager?.let {
+            if (layoutManager is GridLayoutManager) {
+                val defSpanSizeLookup = layoutManager.spanSizeLookup
+                layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                    override fun getSpanSize(position: Int): Int {
+                        return when (getItemViewType(position)) {
+                            HEADER_VIEW -> layoutManager.spanCount
+                            EMPTY_VIEW -> layoutManager.spanCount
+                            FOOTER_VIEW -> layoutManager.spanCount
+                            LOAD_MORE_VIEW -> layoutManager.spanCount
+                            else -> defSpanSizeLookup.getSpanSize(position)
+                        }
+
+                    }
+
+                }
+            }
+        }
+    }
+
+    //对于StaggeredGridLayoutManager ，Head Empty Foot Load More，设置为单独占一行
+    override fun onViewAttachedToWindow(holder: RecyclerView.ViewHolder) {
+        val layoutParams = holder.itemView.layoutParams
+        layoutParams?.let {
+            if (layoutParams is StaggeredGridLayoutManager.LayoutParams) {
+                when (holder.itemViewType) {
+                    HEADER_VIEW, EMPTY_VIEW, FOOTER_VIEW, LOAD_MORE_VIEW -> {
+                        layoutParams.isFullSpan = true
+                    }
+
+                    else -> {
+                        layoutParams.isFullSpan = false
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 是否可以加载更多，主要用在当在下拉刷新状况下,
+     * 不需要加载更多同时进行
+     */
+    fun enableLoadMore(enable: Boolean) {
+        if (hasLoadMoreView()) {
+            isEnableLoadMore = enable
+            if (!enable) {
+                notifyItemRemoved(itemCount - 1)
+            } else {
+                //do nothing
+            }
+        } else {
+            isEnableLoadMore = enable
+            if (enable) {
+                notifyItemInserted(itemCount)
+            } else {
+                //do nothing
+            }
+        }
+
+    }
+
+    /**
+     * 加载更多数据成功
+     *
+     * 添加数据到list后,调用该方法
+     */
+    fun loadMoreSuccess() {
+        mIsLoading = false
+        if (!hasLoadMoreView()) {
+            return
+        }
+        mLoadMoreView.mStatus = LoadMoreStatus.LOADING
+        notifyItemChanged(itemCount - 1)
+    }
+
+    /**
+     * 没有更多数据
+     *
+     * 添加数据到list后,调用该方法
+     *
+     * @param gone 是否显示没有更多数据时的View
+     */
+    fun loadNoMoreData(gone: Boolean = false) {
+        mIsLoading = false
+        if (!hasLoadMoreView()) {
+            return
+        }
+        isNoMoreDataGo = gone
+        mLoadMoreView.mStatus = LoadMoreStatus.NO_MORE_DATA
+        if (gone) {
+            notifyItemRemoved(itemCount - 1)
+        } else {
+            notifyItemChanged(itemCount - 1)
+        }
+
+    }
+
+    /**
+     * 加载数据失败
+     */
+    fun loadFail() {
+        mIsLoading = false
+        if (!hasLoadMoreView()) {
+            return
+        }
+        mLoadMoreView.mStatus = LoadMoreStatus.FAIL
+        notifyItemChanged(itemCount - 1)
+    }
+
+    /**
+     * 移除HeaderView上指定的子View
+     */
+    fun removeHeaderView(view: View) {
+        if (!hasHeaderView()) {
+            return
+        }
+        mHeadViews.removeView(view)
+        if (mHeadViews.childCount == 0) {
+            notifyItemRemoved(0)
+        }
+    }
+
+    /**
+     * 移除FooterView上指定的子View
+     */
+    fun removeFooterView(view: View) {
+        if (!hasFooterView()) {
+            return
+        }
+        mFooterViews.removeView(view)
+        if (mFooterViews.childCount == 0) {
+            if (hasLoadMoreView()) {
+                notifyItemRemoved(itemCount - 2)
+            } else {
+                notifyItemRemoved(itemCount - 1)
+            }
+        }
+    }
+
+    /**
+     * 移除HeaderView指定位置的子View
+     */
+    fun removeHeaderView(index: Int) {
+        if (!hasHeaderView()) {
+            return
+        }
+        val count = mHeadViews.childCount
+        if (index < 0 || index >= count) {
+            throw IndexOutOfBoundsException("Index out of bounds")
+        }
+        mHeadViews.removeViewAt(index)
+        if (mHeadViews.childCount == 0) {
+            notifyItemRemoved(0)
+        }
+    }
+
+    /**
+     * 移除FooterView指定位置的子View
+     */
+    fun removeFooterView(index: Int) {
+        if (!hasFooterView()) {
+            return
+        }
+        val count = mFooterViews.childCount
+        if (index < 0 || index >= count) {
+            throw IndexOutOfBoundsException("Index out of bounds")
+        }
+        mFooterViews.removeViewAt(index)
+        if (mFooterViews.childCount == 0) {
+            if (hasLoadMoreView()) {
+                notifyItemRemoved(itemCount - 2)
+            } else {
+                notifyItemRemoved(itemCount - 1)
+            }
+        }
+    }
+
+    /**
+     * 设置新数据给RecyclerView 用于刷新数据时使用
+     *
+     * @param isRefreshForEmptyData 当刷新后的数据为空时，是否显示到RecyclerView上
+     */
+    fun setNewDate(data: MutableList<T>, isRefreshForEmptyData: Boolean = false) {
+        enableLoadMore(true)
+        mIsLoading = false
+        if (::mLoadMoreView.isInitialized) {
+            mLoadMoreView.mStatus = LoadMoreStatus.LOADING
+        }
+        if (isRefreshForEmptyData) {
+            mData.clear()
+            mData.addAll(data)
+            notifyDataSetChanged()
+        } else {
+            if (data.isNotEmpty()) {
+                mData.clear()
+                mData.addAll(data)
+                notifyDataSetChanged()
+            }
+        }
+    }
+
+    /**
+     * 加载更多数据到RecyclerView
+     */
+    fun addData(data: MutableList<T>) {
+        if (data.isNotEmpty()) {
+            val oldSize = mData.size
+            mData.addAll(data)
+            val position = oldSize + (if (hasHeaderView()) 1 else 0)
+            notifyItemRangeInserted(position, data.size)
+        }
+    }
+
     /**
      * 重写此方法，设置需要显示的Content数据的ViewType,
+     *
      * @param position position已经过处理，对应的即是在mData中的位置
      */
     abstract fun getContentViewItemViewType(position: Int): Int

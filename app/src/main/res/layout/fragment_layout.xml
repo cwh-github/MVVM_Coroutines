@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+    <!--    head foot empty enableLoadMore noLoadMore-->
+    <Button
+        android:id="@+id/mBtnAddHead"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Add Head"
+        android:textAllCaps="false"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/mBtnRemoveHead"
+        />
+
+    <Button
+        android:id="@+id/mBtnRemoveHead"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Remove Head"
+        android:textAllCaps="false"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/mBtnAddHead"
+        app:layout_constraintRight_toLeftOf="@id/mBtnAddFooter"
+        />
+    <Button
+        android:id="@+id/mBtnAddFooter"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Add Footer"
+        android:textAllCaps="false"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/mBtnRemoveHead"
+        app:layout_constraintRight_toLeftOf="@id/mBtnRemoveFooter"
+        />
+    <Button
+        android:id="@+id/mBtnRemoveFooter"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Remove Footer"
+        android:textAllCaps="false"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/mBtnAddFooter"
+        app:layout_constraintRight_toLeftOf="@id/mBtnEnableLoadMore"
+        />
+
+    <Button
+        android:id="@+id/mBtnEnableLoadMore"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Enable Load More"
+        android:textAllCaps="false"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/mBtnRemoveFooter"
+        app:layout_constraintRight_toLeftOf="@id/mBtnNoEnableLoadMore"
+        />
+
+    <Button
+        android:id="@+id/mBtnNoEnableLoadMore"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="No Enable Load More"
+        android:textAllCaps="false"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/mBtnEnableLoadMore"
+        app:layout_constraintRight_toLeftOf="@id/mBtnEmptyView"
+        />
+
+    <Button
+        android:id="@+id/mBtnEmptyView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Empty View"
+        android:textAllCaps="false"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/mBtnNoEnableLoadMore"
+        app:layout_constraintRight_toLeftOf="@id/mBtnNoLoadMore"
+        />
+
+    <Button
+        android:id="@+id/mBtnNoLoadMore"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="No Load More"
+        android:textAllCaps="false"
+        app:layout_constraintLeft_toRightOf="@id/mBtnEmptyView"
+        app:layout_constraintRight_toRightOf="parent"
+        />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/mBarrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="mBtnAddHead,mBtnRemoveHead,mBtnAddFooter
+        ,mBtnRemoveFooter,mBtnEnableLoadMore,mBtnNoEnableLoadMore
+        ,mBtnEmptyView,mBtnNoLoadMore"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/mRecyclerView"
+        app:layout_constraintTop_toBottomOf="@id/mBarrier"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.35"
+        tools:listitem="@layout/item_recycler"
+        tools:itemCount="10"
+        />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
