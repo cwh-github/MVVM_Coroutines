@@ -79,7 +79,7 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: Muta
     /**
      * 是否在没有更多数据时，隐藏加载更多，并取消加载更多功能
      */
-    private var isNoMoreDataGo = false
+    private var isNoMoreDataGone = false
 
     /**
      * 添加Head View
@@ -188,7 +188,7 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: Muta
             return false
         }
 
-        if (mLoadMoreView.mStatus == LoadMoreStatus.NO_MORE_DATA && isNoMoreDataGo) {
+        if (mLoadMoreView.mStatus == LoadMoreStatus.NO_MORE_DATA && isNoMoreDataGone) {
             return false
         }
 
@@ -502,6 +502,8 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: Muta
         } else {
             isEnableLoadMore = enable
             if (enable) {
+                mLoadMoreView.mStatus=LoadMoreStatus.LOADING
+                mIsLoading=false
                 notifyItemInserted(itemCount)
             } else {
                 //do nothing
@@ -536,7 +538,7 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: Muta
         if (!hasLoadMoreView()) {
             return
         }
-        isNoMoreDataGo = gone
+        isNoMoreDataGone = gone
         mLoadMoreView.mStatus = LoadMoreStatus.NO_MORE_DATA
         if (gone) {
             notifyItemRemoved(itemCount - 1)

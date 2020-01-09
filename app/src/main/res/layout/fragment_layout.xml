@@ -97,9 +97,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="bottom"
-        app:constraint_referenced_ids="mBtnAddHead,mBtnRemoveHead,mBtnAddFooter
-        ,mBtnRemoveFooter,mBtnEnableLoadMore,mBtnNoEnableLoadMore
-        ,mBtnEmptyView,mBtnNoLoadMore"
+        app:constraint_referenced_ids="mBtnAddHead,mBtnRemoveHead,mBtnAddFooter,mBtnRemoveFooter,mBtnEnableLoadMore,mBtnNoEnableLoadMore,mBtnEmptyView,mBtnNoLoadMore"
         />
 
     <androidx.recyclerview.widget.RecyclerView
