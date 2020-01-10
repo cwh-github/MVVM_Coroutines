@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.cwh.mvvm_coroutines_base.base.click
+import com.cwh.mvvm_coroutines_base.utils.LogUtils
 
 /**
  * Description:
@@ -29,12 +30,12 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: Muta
     /**
      * 在显示 EmptyView时，是否还显示HeaderView
      */
-    private var mEmptyViewWithHeaderView = false
+    var mEmptyViewWithHeaderView = false
 
     /**
      * 在显示 EmptyView时，是否还显示FooterView
      */
-    private var mEmptyViewWithFooterView = false
+    var mEmptyViewWithFooterView = false
 
     /**
      * 添加头View时，都是添加到LinearLayout中，
@@ -88,9 +89,12 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: Muta
      * @param orientation headerView 的方向，Vertical 宽度match_parent,
      *        horizontal,高度为match_parent
      *
-     * @return 返回添加的View在HeaderView中的位置
+     * @return 返回添加的View在HeaderView中的位置,未添加HeaderView 返回-1
      */
     fun addHeaderView(view: View, index: Int = -1, orientation: Int = LinearLayout.VERTICAL): Int {
+        if (hasEmptyView() && !mEmptyViewWithHeaderView) {
+            return -1
+        }
         if (!::mHeadViews.isInitialized) {
             mHeadViews = LinearLayout(mContext)
             mHeadViews.orientation = orientation
@@ -126,9 +130,12 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: Muta
      * @param orientation FooterView 的方向，Vertical 宽度match_parent,
      *        horizontal,高度为match_parent
      *
-     * @return 返回添加的View在FooterView中的位置
+     * @return 返回添加的View在FooterView中的位置,未添加FooterView 返回-1
      */
     fun addFooterView(view: View, index: Int = -1, orientation: Int = LinearLayout.VERTICAL): Int {
+        if (hasEmptyView() && !mEmptyViewWithFooterView) {
+            return -1
+        }
         var mIndex = index
         if (!::mFooterViews.isInitialized) {
             mFooterViews = LinearLayout(mContext)
@@ -246,7 +253,9 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: Muta
         }
         if (!hasLoadMoreView() && !hasEmptyView()) {
             isEnableLoadMore = true
-            notifyItemInserted(itemCount)
+            val position =
+                mData.size + if (hasHeaderView()) 1 else 0 + if (hasFooterView()) 1 else 0
+            notifyItemInserted(position)
         }
     }
 
@@ -305,40 +314,59 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: Muta
             if (showHeaderView) {
                 dataPosition = position - 1
             }
-            return when (position) {
-                0 -> {
-                    if (showHeaderView) {
-                        HEADER_VIEW
-                    } else {
-                        getContentViewItemViewType(dataPosition)
-                    }
-                }
-
-                itemCount - 1 -> {
-                    if (hasLoadMoreView()) {
-                        LOAD_MORE_VIEW
-                    } else {
-                        if (showFooterView) {
-                            FOOTER_VIEW
-                        } else {
-                            getContentViewItemViewType(dataPosition)
-                        }
-                    }
-                }
-
-                itemCount - 2 -> {
-                    if (showFooterView) {
+            if (hasHeaderView() && position == 0) {
+                return HEADER_VIEW
+            } else {
+                //不能用itemCount 计算ViewType，在Item notify后，itemCount 还未变
+                return if (dataPosition < mData.size) {
+                    getContentViewItemViewType(dataPosition)
+                } else {
+                    val leftSize = dataPosition - mData.size
+                    val footerNum = if (hasFooterView()) 1 else 0
+                    if (leftSize < footerNum) {
                         FOOTER_VIEW
                     } else {
-                        getContentViewItemViewType(dataPosition)
+                        LOAD_MORE_VIEW
                     }
-
                 }
-
-                else -> getContentViewItemViewType(dataPosition)
             }
         }
     }
+
+//when (position) {
+//    0 -> {
+//        if (showHeaderView) {
+//            BaseRecyclerViewAdapter.HEADER_VIEW
+//        } else {
+//            getContentViewItemViewType(dataPosition)
+//        }
+//    }
+//
+//    itemCount - 1 -> {
+//        if (hasLoadMoreView()) {
+//            BaseRecyclerViewAdapter.LOAD_MORE_VIEW
+//        } else {
+//            if (showFooterView) {
+//                BaseRecyclerViewAdapter.FOOTER_VIEW
+//            } else {
+//                getContentViewItemViewType(dataPosition)
+//            }
+//        }
+//    }
+//
+//    itemCount - 2 -> {
+//        if (hasLoadMoreView()) {
+//            if (showFooterView) {
+//                BaseRecyclerViewAdapter.FOOTER_VIEW
+//            } else {
+//                getContentViewItemViewType(dataPosition)
+//            }
+//        } else {
+//            getContentViewItemViewType(dataPosition)
+//        }
+//
+//    }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
@@ -370,6 +398,10 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: Muta
 
             LOAD_MORE_VIEW -> {
                 val rootView = mLoadMoreView.getRootView()
+                rootView.layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
                 LoadMoreViewHolder(rootView)
             }
 
@@ -388,8 +420,6 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: Muta
             FOOTER_VIEW -> {
             }
             LOAD_MORE_VIEW -> {
-                val mViewHolder = holder as
-                        LoadMoreViewHolder
                 when (mLoadMoreView.mStatus) {
                     LoadMoreStatus.LOADING -> {
                         mLoadMoreView.showLoadingView()
@@ -495,16 +525,23 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: Muta
         if (hasLoadMoreView()) {
             isEnableLoadMore = enable
             if (!enable) {
-                notifyItemRemoved(itemCount - 1)
+                val position = mData.size + if (hasHeaderView()) 1 else 0
+                +if (hasFooterView()) 1 else 0
+                //notifyItemRemoved(position)
+                notifyDataSetChanged()
             } else {
                 //do nothing
             }
         } else {
             isEnableLoadMore = enable
             if (enable) {
-                mLoadMoreView.mStatus=LoadMoreStatus.LOADING
-                mIsLoading=false
-                notifyItemInserted(itemCount)
+                if (::mLoadMoreView.isInitialized) {
+                    mLoadMoreView.mStatus = LoadMoreStatus.LOADING
+                    mIsLoading = false
+                    val position = mData.size + if (hasHeaderView()) 1 else 0
+                    +if (hasFooterView()) 1 else 0
+                    notifyItemInserted(position + 1)
+                }
             } else {
                 //do nothing
             }
@@ -523,7 +560,9 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: Muta
             return
         }
         mLoadMoreView.mStatus = LoadMoreStatus.LOADING
-        notifyItemChanged(itemCount - 1)
+        val position = mData.size + if (hasHeaderView()) 1 else 0
+        //notifyItemChanged(position)
+        notifyDataSetChanged()
     }
 
     /**
@@ -540,10 +579,13 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: Muta
         }
         isNoMoreDataGone = gone
         mLoadMoreView.mStatus = LoadMoreStatus.NO_MORE_DATA
+        mLoadMoreView.showNoMoreDataView()
+        val position = mData.size + if (hasHeaderView()) 1 else 0
         if (gone) {
-            notifyItemRemoved(itemCount - 1)
+            notifyItemRemoved(position)
         } else {
-            notifyItemChanged(itemCount - 1)
+            //notifyItemChanged(position)
+            notifyDataSetChanged()
         }
 
     }
@@ -557,7 +599,10 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: Muta
             return
         }
         mLoadMoreView.mStatus = LoadMoreStatus.FAIL
-        notifyItemChanged(itemCount - 1)
+        notifyDataSetChanged()
+        //use notifyItemChanged cause Called attach on a child which is not detached
+        //https://juejin.im/post/59faccf46fb9a0451704885b
+        //notifyItemChanged(position)
     }
 
     /**
@@ -582,10 +627,15 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: Muta
         }
         mFooterViews.removeView(view)
         if (mFooterViews.childCount == 0) {
-            if (hasLoadMoreView()) {
-                notifyItemRemoved(itemCount - 2)
+            if (hasEmptyView()) {
+                if (hasHeaderView() && mEmptyViewWithHeaderView) {
+                    notifyItemRemoved(2)
+                } else {
+                    notifyItemRemoved(1)
+                }
             } else {
-                notifyItemRemoved(itemCount - 1)
+                val position = if (hasHeaderView()) mData.size + 1 else mData.size
+                notifyItemRemoved(position)
             }
         }
     }
@@ -620,10 +670,15 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: Muta
         }
         mFooterViews.removeViewAt(index)
         if (mFooterViews.childCount == 0) {
-            if (hasLoadMoreView()) {
-                notifyItemRemoved(itemCount - 2)
+            if (hasEmptyView()) {
+                if (hasHeaderView() && mEmptyViewWithHeaderView) {
+                    notifyItemRemoved(2)
+                } else {
+                    notifyItemRemoved(1)
+                }
             } else {
-                notifyItemRemoved(itemCount - 1)
+                val position = if (hasHeaderView()) mData.size + 1 else mData.size
+                notifyItemRemoved(position)
             }
         }
     }
@@ -666,6 +721,8 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: Muta
 
     /**
      * 重写此方法，设置需要显示的Content数据的ViewType,
+     *
+     * 如果没有多种ViewType 返回 0 即可
      *
      * @param position position已经过处理，对应的即是在mData中的位置
      */

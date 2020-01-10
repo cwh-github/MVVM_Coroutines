@@ -86,7 +86,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        android:text="No Load More"
+        android:text="No More Data Text"
         android:textAllCaps="false"
         app:layout_constraintLeft_toRightOf="@id/mBtnEmptyView"
         app:layout_constraintRight_toRightOf="parent"
@@ -100,15 +100,22 @@
         app:constraint_referenced_ids="mBtnAddHead,mBtnRemoveHead,mBtnAddFooter,mBtnRemoveFooter,mBtnEnableLoadMore,mBtnNoEnableLoadMore,mBtnEmptyView,mBtnNoLoadMore"
         />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/mRecyclerView"
-        app:layout_constraintTop_toBottomOf="@id/mBarrier"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/mRefresh"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintHeight_percent="0.35"
-        tools:listitem="@layout/item_recycler"
-        tools:itemCount="10"
-        />
+        app:layout_constraintTop_toBottomOf="@id/mBarrier"
+        >
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/mRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:listitem="@layout/item_recycler_type_one"
+            tools:itemCount="10"
+            />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 
 
 
