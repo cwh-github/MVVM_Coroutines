@@ -17,7 +17,7 @@ import com.cwh.mvvm_coroutines_base.utils.LogUtils
  * Date：2020/1/8 0008-11:40
  * Author: cwh
  */
-abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: MutableList<T>) :
+abstract class BaseRecyclerViewAdapter<T>(private val mContext: Context, private val mData: MutableList<T>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
