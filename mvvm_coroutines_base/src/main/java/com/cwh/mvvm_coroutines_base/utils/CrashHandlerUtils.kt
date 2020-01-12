@@ -2,7 +2,6 @@ package com.cwh.mvvm_coroutines_base.utils
 
 import android.content.Context
 import android.os.Build
-import com.qs.qsnetwork.mvvm_base_lib.utils.TimeCovertUtils
 import java.io.*
 
 /**

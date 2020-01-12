@@ -82,7 +82,7 @@
             android:textSize="14sp"
             android:textColor="#cfd8dc"
             android:text="No More Data"
-            android:visibility="invisible"
+            android:visibility="visible"
             />
     </RelativeLayout>
 

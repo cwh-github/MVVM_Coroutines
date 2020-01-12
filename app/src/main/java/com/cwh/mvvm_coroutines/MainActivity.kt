@@ -25,8 +25,9 @@ class MainActivity : AppCompatActivity() {
             add(GridFragment())
             add(StaggeredGridFragment())
         }
+        mViewPager.offscreenPageLimit=2
         mViewPager.adapter=MyViewpagerAdapter(supportFragmentManager,
-            FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)
+            FragmentPagerAdapter.BEHAVIOR_SET_USER_VISIBLE_HINT)
     }
 
     inner class MyViewpagerAdapter(fm: FragmentManager, behavior: Int) :

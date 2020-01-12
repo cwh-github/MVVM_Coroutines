@@ -5,7 +5,7 @@ import android.view.View
 import androidx.core.view.isVisible
 
 /**
- * Description:
+ * Description:加载更多View实例，如需要自己实现，需要实现BaseLoadMoreView
  * Date：2020/1/8 0008-16:37
  * Author: cwh
  */
