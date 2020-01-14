@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
  * Recycler item间的分割线，可用drawable作为分割线，对于分割线，
  * 这里是把其分割为上、下、左、右来进行画各个位置的分割线，对于
  * 分割线的宽高这里需要注意下，中间item的总的分割线的高度，是以上部item
- * 的底部分割线，下个item的底部分割线，一起作为一个总的分割线的，这里需要
+ * 的底部分割线，下个item的顶部分割线，一起作为一个总的分割线的，这里需要
  * 注意计算下，分割线的宽高。
  *
  * 另外，可以根据不同item的position,来画不同的分割线
