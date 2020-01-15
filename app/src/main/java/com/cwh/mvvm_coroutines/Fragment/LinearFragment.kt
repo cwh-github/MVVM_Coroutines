@@ -46,9 +46,12 @@ class LinearFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
+        //initRecyclerView1()
         initBtnEvent()
         initRefresh()
     }
+
+
 
     private fun initRefresh() {
         mRefresh.setOnRefreshListener {
@@ -73,6 +76,62 @@ class LinearFragment : Fragment() {
     private var mHandler = object : Handler() {
         override fun handleMessage(msg: Message) {
 
+        }
+    }
+
+    private fun initRecyclerView1() {
+        if (mAdapter == null) {
+            for (i in 0..30) {
+                mData.add("$i")
+            }
+            mAdapter = MyLinearAdapter(this.activity!!, mData,false)
+            val emptyView = View.inflate(this.activity!!, R.layout.empty_view, null)
+            mAdapter!!.setEmptyView(emptyView)
+            mAdapter!!.setLoadMoreView(SimpleLoadMoreView(this.activity!!))
+            mAdapter!!.onLoadMoreListener = {
+                LogUtils.d("BaseRecyclerViewAdapter", "On Load More")
+                mHandler.postDelayed({
+                    //是否加载数据成功
+                    val num = java.util.Random().nextInt(12)
+                    val result = num % 2 == 0
+                    LogUtils.d("BaseRecyclerViewAdapter", "num is $num,reslut is $result")
+                    if (result) {
+                        val data = mutableListOf<String>()
+                        for (i in 0..10) {
+                            data.add("$i")
+                        }
+                        mAdapter!!.addData(data)
+                        LogUtils.d("BaseRecyclerViewAdapter", "Add Data Success")
+                        //是否还有更多数据
+                        val result = java.util.Random().nextInt(10) > 6
+                        if (result) {
+                            mAdapter!!.loadMoreSuccess()
+                        } else {
+                            mAdapter!!.loadNoMoreData(isNoMoreDataGone)
+                            LogUtils.d("BaseRecyclerViewAdapter", "No More Data")
+                        }
+                    } else {
+                        mAdapter!!.loadFail()
+                        LogUtils.d("BaseRecyclerViewAdapter", "Load Fail")
+                    }
+
+                }, 2000)
+            }
+            mRecyclerView.layoutManager = LinearLayoutManager(
+                this.context, LinearLayoutManager.HORIZONTAL,
+                false
+            )
+            mRecyclerView.adapter = mAdapter
+            mRecyclerView.addItemDecoration(object : RecyclerView.ItemDecoration() {
+                override fun getItemOffsets(
+                    outRect: Rect,
+                    view: View,
+                    parent: RecyclerView,
+                    state: RecyclerView.State
+                ) {
+                    outRect.right = dip2px(16f).toInt()
+                }
+            })
         }
     }
 
@@ -191,7 +250,7 @@ class LinearFragment : Fragment() {
 }
 
 
-class MyLinearAdapter(mContext: Context, mData: MutableList<String>) :
+class MyLinearAdapter(mContext: Context, mData: MutableList<String>,val isVer:Boolean=true) :
     BaseRecyclerViewAdapter<String>(mContext, mData) {
     val TYPE_ONE = 0
     val TYPE_TWO = 2
@@ -209,14 +268,20 @@ class MyLinearAdapter(mContext: Context, mData: MutableList<String>) :
         viewType: Int
     ): RecyclerView.ViewHolder {
         return if (viewType == TYPE_ONE) {
-            val view =
+            val view =if(isVer)
                 LayoutInflater.from(parent.context)
                     .inflate(R.layout.item_recycler_type_one, parent, false)
+            else
+                LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_recycler_type_horization_one, parent, false)
             LinearViewHolder(view)
         } else {
-            val view =
+            val view =if(isVer)
                 LayoutInflater.from(parent.context)
                     .inflate(R.layout.item_recycler_type_two, parent, false)
+            else
+                LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_recycler_type_horization_two, parent, false)
             LinearViewHolder1(view)
         }
 

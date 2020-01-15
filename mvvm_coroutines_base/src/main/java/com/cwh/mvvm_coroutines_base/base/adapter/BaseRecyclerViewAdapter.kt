@@ -17,7 +17,7 @@ import com.cwh.mvvm_coroutines_base.utils.LogUtils
  * Date：2020/1/8 0008-11:40
  * Author: cwh
  */
-abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: MutableList<T>) :
+abstract class BaseRecyclerViewAdapter<T>(private val mContext: Context, private val mData: MutableList<T>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -726,7 +726,7 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: Muta
      *
      * @param position position已经过处理，对应的即是在mData中的位置
      */
-    abstract fun getContentViewItemViewType(position: Int): Int
+    open fun getContentViewItemViewType(position: Int): Int=0
 
     /**
      * 重写此方法，实现Content数据创建ViewHolder
