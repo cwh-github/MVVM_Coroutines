@@ -1,2 +1,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.cwh.mvvm_coroutines_base" />
+    package="com.cwh.mvvm_coroutines_base" >
+
+    <application
+        android:networkSecurityConfig="@xml/network_config"
+        >
+
+        <!-- Android 7.0以后获取uri需要此权限 -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+
+    </application>
+</manifest>
