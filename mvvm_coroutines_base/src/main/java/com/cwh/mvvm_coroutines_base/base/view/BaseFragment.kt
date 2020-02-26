@@ -44,7 +44,7 @@ abstract class BaseFragment<VM : BaseViewModel<*>, V : ViewDataBinding> : Fragme
 
     /**
      * ViewModel在DataBinding中生成的Id
-     * 当使用ViewDataBinding时，mViewModelVariableId=-1即可
+     * 当使用ViewDataBinding的类型为ViewDataBinding时，mViewModelVariableId=-1即可
      */
     protected abstract val mViewModelVariableId: Int
 

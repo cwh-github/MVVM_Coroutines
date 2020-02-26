@@ -17,7 +17,7 @@ import com.cwh.mvvm_coroutines_base.utils.LogUtils
  * Date：2020/1/8 0008-11:40
  * Author: cwh
  */
-abstract class BaseRecyclerViewAdapter<T>(private val mContext: Context, private val mData: MutableList<T>) :
+abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: MutableList<T>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -220,17 +220,25 @@ abstract class BaseRecyclerViewAdapter<T>(private val mContext: Context, private
 
     /**
      * 设置EmptyView,当无填充数据时，显示EmptyView
+     * @param isCustom 是否为定制的EmptyView的高度，默认不是，默认铺满全屏
      */
-    fun setEmptyView(view: View) {
+    fun setEmptyView(view: View,isCustom:Boolean=false) {
         //当没有初始化EmptyView时，需要初始化View,insert到列表中
         //当已经初始化完成，只需要将新View添加到EmptyView即可
         var insert = false
         if (!::mEmptyView.isInitialized) {
             mEmptyView = FrameLayout(mContext)
-            mEmptyView.layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-            )
+            if(isCustom){
+                mEmptyView.layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+            }else{
+                mEmptyView.layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                )
+            }
             insert = true
         }
         mEmptyView.removeAllViews()
@@ -471,7 +479,11 @@ abstract class BaseRecyclerViewAdapter<T>(private val mContext: Context, private
 
             }
             else -> {
-                onBindContentViewHolder(holder, position)
+                var dataPosition=position
+                if(hasHeaderView()){
+                    dataPosition -= 1
+                }
+                onBindContentViewHolder(holder, dataPosition)
             }
         }
     }
@@ -682,6 +694,33 @@ abstract class BaseRecyclerViewAdapter<T>(private val mContext: Context, private
             }
         }
     }
+
+    /**
+     * 移除HeaderView(全部移除)
+     */
+    fun removeAllHeaderView(){
+        if (!hasHeaderView()) {
+            return
+        }
+        mHeadViews.removeAllViews()
+        if (mHeadViews.childCount == 0) {
+            notifyDataSetChanged()
+        }
+    }
+
+    /**
+     * 移除FooterView(全部移除)
+     */
+    fun removeAllFooterView(){
+        if (!hasFooterView()) {
+            return
+        }
+        mFooterViews.removeAllViews()
+        if (mFooterViews.childCount == 0) {
+            notifyDataSetChanged()
+        }
+    }
+
 
     /**
      * 设置新数据给RecyclerView 用于刷新数据时使用

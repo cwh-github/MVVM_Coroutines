@@ -1,5 +1,6 @@
 package com.cwh.mvvm_coroutines_base.utils
 
+import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -8,10 +9,7 @@ import android.os.Build
 import android.provider.MediaStore
 import androidx.annotation.NonNull
 import androidx.core.content.FileProvider
-import java.io.BufferedOutputStream
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
+import java.io.*
 
 
 /**
@@ -186,4 +184,91 @@ object FileUtils {
             Uri.fromFile(file)
         }
     }
+
+    /**
+     * copy File
+     */
+    fun copyFile(sourceFile:File,targetFile:File):Boolean{
+        if(!sourceFile.exists()){
+            throw NoSuchFieldError("sourceFile Not Exist")
+        }
+        var result=true
+        try {
+            FileOutputStream(targetFile).use { outStream ->
+                val buffer = ByteArray(1024)
+                var len = 0
+                FileInputStream(sourceFile).use { inStream ->
+                    while ((inStream.read(buffer).also { len = it }) > 0) {
+                        outStream.write(buffer, 0, len)
+                    }
+                }
+            }
+        }catch (e:Exception){
+            e.printStackTrace()
+            result=false
+        }
+        return result
+    }
+
+    /**
+     * 通过MediaStore保存，适配AndroidQ，(Android Q 保存成功自动添加到相册数据库，无需再发送广告告诉系统插入相册)
+     *
+     * @param context      context
+     * @param sourceFile   源文件
+     * @param saveFileName 保存的文件名
+     * @param saveDirName  picture子目录
+     * @return 成功或者失败
+     */
+    fun saveImageWithAndroidQ(
+        context: Context,
+        sourceFile: File,
+        saveFileName: String,
+        saveDirName: String
+    ): Boolean {
+
+            val values = ContentValues()
+            values.put(MediaStore.Images.Media.DESCRIPTION, "Scenic Image")
+            values.put(MediaStore.Images.Media.DISPLAY_NAME, saveFileName)
+            values.put(MediaStore.Images.Media.MIME_TYPE, "image/png")
+            values.put(MediaStore.Images.Media.TITLE, "Image.png")
+            values.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/$saveDirName")
+
+            val external = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            val resolver = context.contentResolver
+            val insertUri = resolver.insert(external, values)
+            var inputStream: BufferedInputStream? = null
+            var os: OutputStream? = null
+            var result = false
+            try {
+                inputStream = BufferedInputStream(FileInputStream(sourceFile))
+                if (insertUri != null) {
+                    os = resolver.openOutputStream(insertUri)
+                }
+                if (os != null) {
+                    val buffer = ByteArray(1024 * 4)
+                    var len: Int
+                    while ((inputStream!!.read(buffer)).also { len = it } != -1) {
+                        os!!.write(buffer, 0, len)
+                    }
+                    os!!.flush()
+                }
+                result = true
+            } catch (e: IOException) {
+                result = false
+            } finally {
+                try {
+                    inputStream?.close()
+                } catch (e: java.lang.Exception) {
+                }
+
+                try {
+                    os?.close()
+                } catch (e: java.lang.Exception) {
+                }
+
+            }
+            return result
+    }
+
+
 }

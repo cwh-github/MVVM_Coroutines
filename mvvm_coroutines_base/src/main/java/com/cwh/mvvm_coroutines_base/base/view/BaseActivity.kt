@@ -37,7 +37,7 @@ abstract class BaseActivity<VM : BaseViewModel<*>, V : ViewDataBinding> : AppCom
 
     /**
      * ViewModel在DataBinding中生成的Id
-     * 当使用ViewDataBinding时，mViewModelVariableId=-1即可
+     * 当使用ViewDataBinding的类型为ViewDataBinding时，mViewModelVariableId=-1即可
      */
     protected abstract val mViewModelVariableId: Int
 
