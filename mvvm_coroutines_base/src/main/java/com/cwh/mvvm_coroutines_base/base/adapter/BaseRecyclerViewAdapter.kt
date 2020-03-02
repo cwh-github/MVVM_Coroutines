@@ -582,7 +582,7 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: Muta
      *
      * 添加数据到list后,调用该方法
      *
-     * @param gone 是否显示没有更多数据时的View
+     * @param gone 是否隐藏没有更多数据时的View
      */
     fun loadNoMoreData(gone: Boolean = false) {
         mIsLoading = false

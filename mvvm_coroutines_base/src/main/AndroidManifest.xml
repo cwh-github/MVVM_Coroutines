@@ -1,8 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.cwh.mvvm_coroutines_base" >
 
+    <uses-permission android:name="android.permission.INTERNET "/>
+
     <application
         android:networkSecurityConfig="@xml/network_config"
+        android:requestLegacyExternalStorage="true"
         >
 
         <!-- Android 7.0以后获取uri需要此权限 -->

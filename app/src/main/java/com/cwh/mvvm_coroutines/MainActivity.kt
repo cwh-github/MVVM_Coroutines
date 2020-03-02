@@ -10,6 +10,8 @@ import com.cwh.mvvm_coroutines.Fragment.LinearFragment
 import com.cwh.mvvm_coroutines.Fragment.StaggeredGridFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
+//Base_URL="http://news-at.zhihu.com/api/4/"
+
 class MainActivity : AppCompatActivity() {
 
     val mFragments= mutableListOf<Fragment>()
@@ -28,7 +30,9 @@ class MainActivity : AppCompatActivity() {
         mViewPager.offscreenPageLimit=2
         mViewPager.adapter=MyViewpagerAdapter(supportFragmentManager,
             FragmentPagerAdapter.BEHAVIOR_SET_USER_VISIBLE_HINT)
+
     }
+
 
     inner class MyViewpagerAdapter(fm: FragmentManager, behavior: Int) :
         FragmentPagerAdapter(fm, behavior) {

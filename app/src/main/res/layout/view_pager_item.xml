@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ImageView
+        android:id="@+id/mImageTop"
+        android:layout_width="match_parent"
+        android:layout_height="340dp"
+        android:scaleType="centerCrop"
+        />
+
+    <View
+        android:id="@+id/mViewBg"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="170dp"
+        />
+
+    <View
+        android:id="@+id/mViewBg2"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_below="@id/mViewBg"
+        />
+
+    <TextView
+        android:id="@+id/mTvAuthor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/mViewBg2"
+        android:layout_marginBottom="25dp"
+        android:layout_marginLeft="20dp"
+        android:textSize="14sp"
+        android:textColor="#90ffffff"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:text="1234"
+        android:layout_marginRight="20dp"
+        />
+    <TextView
+        android:id="@+id/mTvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:text="1234455"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_above="@id/mTvAuthor"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/color_white"
+        android:textStyle="bold"
+        android:textSize="22sp"
+        />
+</RelativeLayout>

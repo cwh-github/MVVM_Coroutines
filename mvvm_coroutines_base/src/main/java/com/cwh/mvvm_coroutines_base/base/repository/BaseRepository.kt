@@ -6,10 +6,11 @@ package com.cwh.mvvm_coroutines_base.base.repository
  * Date：2019/12/31 0031-15:58
  * Author: cwh
  */
-abstract class BaseRepository<R : BaseRemoteRepository, L : BaseLocalRepository>(
-    val remote: R,
-    val local: L
-) : IRepository {
+abstract class BaseRepository<R : BaseRemoteRepository, L : BaseLocalRepository> : IRepository {
+
+    abstract val remote:R
+
+    abstract val local:L
 
     override fun onClear() {
         remote.onClear()

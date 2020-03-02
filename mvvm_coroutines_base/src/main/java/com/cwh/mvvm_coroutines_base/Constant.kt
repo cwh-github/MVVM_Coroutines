@@ -36,7 +36,7 @@ const val WRITE_TIMEOUT: Long = 45
 /**
  * 请求地址的BASE_URL
  */
-const val BASE_URL="https://api.github.com/"
+const val BASE_URL="http://news-at.zhihu.com/api/4/"
 
 /**
  * 请求成功的code 200

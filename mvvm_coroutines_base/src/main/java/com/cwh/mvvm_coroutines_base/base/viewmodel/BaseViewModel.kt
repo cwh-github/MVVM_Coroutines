@@ -5,14 +5,13 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.cwh.mvvm_coroutines_base.REQ_SUC
-import com.cwh.mvvm_coroutines_base.utils.LogUtils
 import com.cwh.mvvm_coroutines_base.base.Entity
 import com.cwh.mvvm_coroutines_base.base.Event
 import com.cwh.mvvm_coroutines_base.base.ExceptionHandle
 import com.cwh.mvvm_coroutines_base.base.repository.IRepository
+import com.cwh.mvvm_coroutines_base.utils.LogUtils
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.*
 
 /**
  * Description:BaseViewModel 主要的数据逻辑操作在ViewModel中执行
@@ -30,7 +29,7 @@ abstract class BaseViewModel<T : IRepository>(application: Application) :
 
     val mDefUIEvent = DefUIEvent()
 
-    protected fun launchOnUI(block: suspend CoroutineScope.() -> Unit) {
+    fun launchOnUI(block: suspend CoroutineScope.() -> Unit) {
         viewModelScope.launch {
             block()
         }
@@ -116,7 +115,8 @@ abstract class BaseViewModel<T : IRepository>(application: Application) :
      *
      * @param isLaunchOnIO 是否在IO线程运行Block(默认在主线程运行)
      * @param onStart 开始前的处理
-     * @param block 需要处理的逻辑(包括数据的请求和UI逻辑的处理)
+     * @param block 需要处理的逻辑(包括数据的请求和UI逻辑的处理，在isLaunchOnIo为false时，
+     *              若为true,需要自己切换的主线程修改UI)
      * @param onError 出现Exception时的逻辑
      * @param onComplete 不管处理成功或出现异常后的处理逻辑
      *
