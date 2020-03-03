@@ -21,7 +21,7 @@ import com.cwh.mvvm_coroutines_base.base.adapter.SimpleLoadMoreView
 import com.cwh.mvvm_coroutines_base.base.click
 import com.cwh.mvvm_coroutines_base.utils.DisplayUtils
 import com.cwh.mvvm_coroutines_base.utils.LogUtils
-import com.qs.scenic.util.GlideUtils
+import com.cwh.mvvm_coroutines.utils.GlideUtils
 import kotlinx.android.synthetic.main.fragment_layout.*
 import kotlinx.android.synthetic.main.item_recycler_type_one.view.*
 

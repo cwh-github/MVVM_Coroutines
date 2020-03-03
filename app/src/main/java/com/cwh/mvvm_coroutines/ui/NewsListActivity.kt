@@ -10,11 +10,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cwh.mvvm_coroutines.R
 import com.cwh.mvvm_coroutines.model.TopStory
+import com.cwh.mvvm_coroutines.model.repository.RemoteNewsDetailsRepository
 import com.cwh.mvvm_coroutines.widget.NewsHeadView
 import com.cwh.mvvm_coroutines_base.base.adapter.BaseRecyclerViewAdapter
 import com.cwh.mvvm_coroutines_base.base.click
 import com.cwh.mvvm_coroutines_base.base.view.BaseActivity
 import com.cwh.mvvm_coroutines_base.base.viewmodel.NoViewModel
+import com.cwh.mvvm_coroutines_base.utils.LogUtils
 import com.cwh.mvvm_coroutines_base.utils.TimeCovertUtils
 import com.cwh.mvvm_coroutines_base.utils.ToastUtils
 import kotlinx.android.synthetic.main.activity_news_list.*
@@ -36,6 +38,7 @@ class NewsListActivity : BaseActivity<NoViewModel,ViewDataBinding>() {
         initToolBar()
         initHeadView()
         initRecyclerView()
+
     }
 
     private fun initToolBar() {
@@ -45,7 +48,7 @@ class NewsListActivity : BaseActivity<NoViewModel,ViewDataBinding>() {
             (hour in 6..10) ->{
                 "早上好~"
             }
-            (hour in 12..14)->{
+            (hour in 12..13)->{
                 "中午好~"
             }
             (hour in 15..18)->{
@@ -63,6 +66,24 @@ class NewsListActivity : BaseActivity<NoViewModel,ViewDataBinding>() {
                 "知乎日报"
             }
         }
+
+        val month=when(TimeCovertUtils.covertMonth()){
+            1->"一月"
+            2->"二月"
+            3->"三月"
+            4->"四月"
+            5->"五月"
+            6->"六月"
+            7->"七月"
+            8->"八月"
+            9->"九月"
+            10->"十月"
+            11->"十一月"
+            12->"十二月"
+            else->"一月"
+        }
+        mToolBar.mTvMonth.text=month
+        mToolBar.mTvDay.text="${TimeCovertUtils.covertDay()}"
 
         mToolBar.click {
             mRecyclerView.smoothScrollToPosition(0)

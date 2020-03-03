@@ -1,4 +1,4 @@
-package com.qs.scenic.util
+package com.cwh.mvvm_coroutines.utils
 
 import android.content.Context
 import android.graphics.drawable.Drawable

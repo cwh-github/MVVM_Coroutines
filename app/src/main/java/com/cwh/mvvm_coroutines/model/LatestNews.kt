@@ -1,5 +1,10 @@
 package com.cwh.mvvm_coroutines.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
+import com.cwh.mvvm_coroutines.db.Convert
+
 /**
  * Description:
  * Date：2020/3/2-13:36
@@ -23,6 +28,9 @@ data class LatestNews(
 "type": 0,
 "id": 9720954
  */
+
+@Entity
+@TypeConverters(Convert::class)
 data class Story(
     val ga_prefix: String,
     /**
@@ -32,6 +40,7 @@ data class Story(
     /**
      * 文章详情对应的id
      */
+    @PrimaryKey(autoGenerate = false)
     val id: Int,
     /**
      * 渐变色对应的启始颜色  0xb3a87d
@@ -46,7 +55,19 @@ data class Story(
     /**
      * 文章详情对应的url
      */
-    val url: String
+    val url: String,
+    /**
+     * 是否收藏
+     */
+    var isLike:Boolean,
+    /**
+     * 是否已读
+     */
+    var isRead:Boolean,
+    /**
+     * news对应的时间
+     */
+    var date:Long
 )
 
 /**
@@ -60,6 +81,7 @@ data class Story(
 "type": 0,
 "id": 9720746
  */
+@Entity
 data class TopStory(
     val ga_prefix: String,
     /**
@@ -69,6 +91,7 @@ data class TopStory(
     /**
     `对应的文章id
      */
+    @PrimaryKey(autoGenerate = false)
     val id: Int,
     val image: String,
     /**

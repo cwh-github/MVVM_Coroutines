@@ -17,6 +17,12 @@ import kotlinx.coroutines.flow.*
  * Description:BaseViewModel 主要的数据逻辑操作在ViewModel中执行
  * 通过LiveData 或者 DataBinding驱动数据绑定到UI
  *
+ * 为避免观察livedata多个实例，livedata应为val
+ * Transformations.map()，根据一个livedata实例生成另一个livedata实例，主要是观察
+ * livedata的具体数据的变化，livedata的具体数据变化时，则其生成的实例的数据也发生变化
+ *  Transformations.switchMap() 根据一个livedata实例生成另一个livedata实例，主要是观察
+ *  livedata的变化，当这个livedata变化时，其生成的实例livedata的数据发生变化
+ *
  *
  * Date：2019/12/31 0031-15:36
  * Author: cwh
@@ -34,6 +40,8 @@ abstract class BaseViewModel<T : IRepository>(application: Application) :
             block()
         }
     }
+
+
 
     /**
      * 指定在IO线程中调用
@@ -241,6 +249,10 @@ abstract class BaseViewModel<T : IRepository>(application: Application) :
          */
 
         val mToastEvent = MutableLiveData<Event<String>>()
+
+        fun test(){
+
+        }
 
         /**
          * 是否显示正在加载的View  true:显示，false: 隐藏

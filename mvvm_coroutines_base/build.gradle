@@ -61,6 +61,9 @@ dependencies {
         exclude group: 'org.json', module: 'json'
     }
 
+    //内存泄露检测工具
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-beta-5'
+
 
 
 }

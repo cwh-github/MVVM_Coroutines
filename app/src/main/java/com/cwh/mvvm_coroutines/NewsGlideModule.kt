@@ -1,4 +1,4 @@
-package com.qs.scenic
+package com.cwh.mvvm_coroutines
 
 import android.app.ActivityManager
 import android.content.Context

@@ -94,8 +94,6 @@ dependencies {
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:${var}"
     implementation project(path: ':mvvm_coroutines_base')
 
-
-
     //
     implementation 'androidx.palette:palette:1.0.0'
 
@@ -104,6 +102,15 @@ dependencies {
     kapt 'com.github.bumptech.glide:compiler:4.10.0'
     //viewpager
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
+    //jsoup
+    implementation 'org.jsoup:jsoup:1.12.2'
+
+    //room
+    implementation "androidx.room:room-runtime:2.2.3"
+    kapt "androidx.room:room-compiler:2.2.3" // For Kotlin use kapt instead of annotationProcessor
+
+    // optional - Kotlin Extensions and Coroutines support for Room
+    implementation "androidx.room:room-ktx:2.2.3"
 
 
 }

@@ -103,4 +103,35 @@ object TimeCovertUtils {
         }
     }
 
+    /**
+     * 获取当前月份
+     */
+    fun covertMonth():Int{
+        val calendar=Calendar.getInstance(Locale.CHINA)
+        return calendar.get(Calendar.MONTH)+1
+    }
+
+    /**
+     * 年
+     */
+    fun covertYear():Int{
+        val calendar=Calendar.getInstance(Locale.CHINA)
+        return calendar.get(Calendar.YEAR)
+    }
+
+    /**
+     * 日
+     */
+    fun covertDay():Int{
+        val calendar=Calendar.getInstance(Locale.CHINA)
+        return calendar.get(Calendar.DAY_OF_MONTH)
+    }
+
+    /**
+     * week
+     */
+    fun convertWeek():Int{
+        val calendar=Calendar.getInstance(Locale.CHINA)
+        return calendar.get(Calendar.DAY_OF_WEEK)
+    }
 }

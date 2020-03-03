@@ -1,7 +1,9 @@
 package com.cwh.mvvm_coroutines.model.repository
 
 import com.cwh.mvvm_coroutines.api.NewsApiService
+import com.cwh.mvvm_coroutines.db.DataBaseHelper
 import com.cwh.mvvm_coroutines.model.LatestNews
+import com.cwh.mvvm_coroutines.utils.TimeParseUtils
 import com.cwh.mvvm_coroutines_base.base.net.RetrofitUtils
 import com.cwh.mvvm_coroutines_base.base.repository.BaseLocalRepository
 import com.cwh.mvvm_coroutines_base.base.repository.BaseRemoteRepository
@@ -30,8 +32,10 @@ class RemoteLatestRepository:BaseRemoteRepository(),ILatestNewsRepository{
 
 //从数据库获取数据
 class LocalLatestRepository:BaseLocalRepository(),ILatestNewsRepository{
+    private val dbHelper=DataBaseHelper.instance()
     override suspend fun latestNews(): LatestNews {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        //val result=dbHelper.storyByDate(TimeParseUtils.currentTime2Long())
+        TODO()
     }
 
 }

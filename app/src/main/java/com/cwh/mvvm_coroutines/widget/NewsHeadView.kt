@@ -7,7 +7,6 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -22,7 +21,7 @@ import com.cwh.mvvm_coroutines.model.TopStory
 import com.cwh.mvvm_coroutines_base.base.find
 import com.cwh.mvvm_coroutines_base.utils.DisplayUtils
 import com.cwh.mvvm_coroutines_base.utils.LogUtils
-import com.qs.scenic.util.GlideUtils
+import com.cwh.mvvm_coroutines.utils.GlideUtils
 
 /**
  * Description:
@@ -63,7 +62,7 @@ class NewsHeadView(val context: Context,val news:MutableList<TopStory>) {
 
     private val START_LOOP=10001
 
-    private var isLoop=true
+    private var isLoop=false
 
     private val mHandler= object :Handler(Looper.getMainLooper()){
         override fun handleMessage(msg: Message) {
