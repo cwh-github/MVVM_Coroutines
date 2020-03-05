@@ -10,7 +10,7 @@ import androidx.room.TypeConverter
 class Convert {
 
     @TypeConverter
-    fun arrayToString(data:List<String>?):String?{
+    fun arrayToString(data:ArrayList<String>?):String?{
         return if(data.isNullOrEmpty()){
             null
         }else{
@@ -27,11 +27,16 @@ class Convert {
     }
 
     @TypeConverter
-    fun stringToArray(str:String?):List<String>?{
+    fun stringToArray(str:String?):ArrayList<String>?{
         return if(str.isNullOrEmpty()){
             null
         }else{
-           str.split("~")
+            val array= ArrayList<String>()
+            val result=str.split("~")
+            result.forEach {
+                array.add(it)
+            }
+            array
         }
     }
 }

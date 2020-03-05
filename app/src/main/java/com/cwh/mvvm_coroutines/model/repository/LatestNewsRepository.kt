@@ -3,11 +3,14 @@ package com.cwh.mvvm_coroutines.model.repository
 import com.cwh.mvvm_coroutines.api.NewsApiService
 import com.cwh.mvvm_coroutines.db.DataBaseHelper
 import com.cwh.mvvm_coroutines.model.LatestNews
+import com.cwh.mvvm_coroutines.model.Story
 import com.cwh.mvvm_coroutines.utils.TimeParseUtils
 import com.cwh.mvvm_coroutines_base.base.net.RetrofitUtils
 import com.cwh.mvvm_coroutines_base.base.repository.BaseLocalRepository
 import com.cwh.mvvm_coroutines_base.base.repository.BaseRemoteRepository
 import com.cwh.mvvm_coroutines_base.base.repository.BaseRepository
+import com.cwh.mvvm_coroutines_base.utils.LogUtils
+import java.lang.Exception
 
 /**
  * Description:
@@ -25,7 +28,12 @@ class RemoteLatestRepository:BaseRemoteRepository(),ILatestNewsRepository{
 
     private val apiService=RetrofitUtils.createServiceInstance(NewsApiService::class.java)
     override suspend fun latestNews(): LatestNews {
-        return apiService.latestNews()
+        val result=apiService.latestNews()
+        result.stories?.forEachIndexed{index,story ->
+            story.orderNum=index
+            story.date=result.date
+        }
+        return result
     }
 
 }
@@ -34,8 +42,9 @@ class RemoteLatestRepository:BaseRemoteRepository(),ILatestNewsRepository{
 class LocalLatestRepository:BaseLocalRepository(),ILatestNewsRepository{
     private val dbHelper=DataBaseHelper.instance()
     override suspend fun latestNews(): LatestNews {
-        //val result=dbHelper.storyByDate(TimeParseUtils.currentTime2Long())
-        TODO()
+        val stories=dbHelper.storyLatest()
+        val topStories=dbHelper.queryTopStory()
+        return LatestNews(TimeParseUtils.currentTime2Long(),stories,topStories)
     }
 
 }
@@ -47,8 +56,27 @@ class LatestNewsRepository:BaseRepository<RemoteLatestRepository,LocalLatestRepo
     override val local: LocalLatestRepository
         get() = LocalLatestRepository()
 
+    private val dbHelper=DataBaseHelper.instance()
+
     override suspend fun latestNews(): LatestNews {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        var result:LatestNews
+        try {
+            //从服务器加载失败，加载数据库中数据
+            result=remote.latestNews()
+            //实际应该在ViewModel中存储最好
+            dbHelper.insertStory(result.stories)
+            dbHelper.deleteTopStory()
+            dbHelper.insertTopStory(result.top_stories)
+        }catch (e:Exception){
+            e.printStackTrace()
+            LogUtils.e("Error is ${e.message}")
+        }
+        return local.latestNews()
+    }
+    //设置story 已读
+    suspend fun readStory(story:Story){
+        story.isRead=true
+        dbHelper.updateStory(story)
     }
 
 }

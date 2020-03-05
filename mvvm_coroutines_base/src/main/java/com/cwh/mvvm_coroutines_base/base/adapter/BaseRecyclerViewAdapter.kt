@@ -315,8 +315,6 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: Muta
             }
         } else {
             val showHeaderView = hasHeaderView()
-            val showFooterView = hasFooterView()
-            val dataSize = mData.size
             //实际数据对应的position,对数据position,已进行调整，对应数据在mData中的位置
             var dataPosition = position
             if (showHeaderView) {
@@ -719,6 +717,7 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: Muta
         if (mFooterViews.childCount == 0) {
             notifyDataSetChanged()
         }
+
     }
 
 

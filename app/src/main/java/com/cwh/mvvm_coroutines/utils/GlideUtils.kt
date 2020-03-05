@@ -17,9 +17,9 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.RequestOptions.bitmapTransform
 import com.bumptech.glide.request.target.Target
+import com.cwh.mvvm_coroutines.GlideApp
 import com.cwh.mvvm_coroutines.R
 import com.cwh.mvvm_coroutines_base.utils.DisplayUtils
-import com.qs.scenic.GlideApp
 import java.io.File
 
 

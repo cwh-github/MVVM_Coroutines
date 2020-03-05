@@ -1,6 +1,5 @@
 package com.cwh.mvvm_coroutines.db
 
-import androidx.lifecycle.MutableLiveData
 import androidx.room.Room
 import com.cwh.mvvm_coroutines.model.NewsDetails
 import com.cwh.mvvm_coroutines.model.Story
@@ -38,7 +37,7 @@ class DataBaseHelper private constructor(){
     /**
      * 插入story
      */
-    suspend fun insertStoty(stories:List<Story>){
+    suspend fun insertStory(stories:List<Story>?){
         db.storyDao().insert(stories)
     }
 
@@ -68,15 +67,22 @@ class DataBaseHelper private constructor(){
     /**
      * 根据时间获取stories
      */
-    suspend fun storyByDate(date:Long):MutableLiveData<List<Story>?>{
+    suspend fun storyByDate(date:Long): List<Story>? {
         val newDate=TimeParseUtils.beforeTime2Long(date,1)
         return db.storyDao().queryByDate(newDate)
     }
 
     /**
+     * 获取最近新闻
+     */
+    suspend fun storyLatest():List<Story>?{
+        return  db.storyDao().queryLatestStory()
+    }
+
+    /**
      * 根据id查询story
      */
-    suspend fun storyById(id:Long):MutableLiveData<Story?>{
+    suspend fun storyById(id:Long):Story?{
         return db.storyDao().query(id)
     }
 
@@ -92,7 +98,7 @@ class DataBaseHelper private constructor(){
     /**
      * 查询获取所有的Topstories
      */
-    suspend fun queryTopStory():MutableLiveData<List<TopStory>?>{
+    suspend fun queryTopStory():List<TopStory>?{
         return db.topStoryDao().query()
     }
 
@@ -106,7 +112,7 @@ class DataBaseHelper private constructor(){
     /**
      * 插入所有的Topstories
      */
-    suspend fun insertTopStory(stories: List<TopStory>){
+    suspend fun insertTopStory(stories: List<TopStory>?){
         db.topStoryDao().insert(stories)
     }
 
@@ -119,7 +125,7 @@ class DataBaseHelper private constructor(){
         db.detailsDao().update(newsDetails)
     }
 
-    suspend fun queryDetailsById(newId:Long):MutableLiveData<NewsDetails?>{
+    suspend fun queryDetailsById(newId:Long):NewsDetails?{
         return db.detailsDao().query(newId)
     }
 

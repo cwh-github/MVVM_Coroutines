@@ -1,7 +1,9 @@
 package com.cwh.mvvm_coroutines.model.repository
 
 import com.cwh.mvvm_coroutines.api.NewsApiService
+import com.cwh.mvvm_coroutines.db.DataBaseHelper
 import com.cwh.mvvm_coroutines.model.BeforeNews
+import com.cwh.mvvm_coroutines.utils.TimeParseUtils
 import com.cwh.mvvm_coroutines_base.base.net.RetrofitUtils
 import com.cwh.mvvm_coroutines_base.base.repository.BaseLocalRepository
 import com.cwh.mvvm_coroutines_base.base.repository.BaseRemoteRepository
@@ -18,21 +20,30 @@ interface IBeforeNewsRepository{
      * 根据给定时间，获取之前news
      * @param date 给定时间 ，如：20200303
      */
-    suspend fun beforNews(date:Long):BeforeNews
+    suspend fun beforeNews(date:Long):BeforeNews
 }
 
 class RemoteBeforeNewsRepository:IBeforeNewsRepository, BaseRemoteRepository() {
 
     private val apiService=RetrofitUtils.createServiceInstance(NewsApiService::class.java)
-    override suspend fun beforNews(date: Long): BeforeNews {
-        return apiService.beforeNewsData(date)
+    override suspend fun beforeNews(date: Long): BeforeNews {
+        val result=apiService.beforeNewsData(date)
+        result.stories?.forEachIndexed{index,story ->
+            story.orderNum=index
+            story.date=result.date
+        }
+        return result
     }
 
 }
 
 class LocalBeforeNewsRepository:IBeforeNewsRepository, BaseLocalRepository() {
-    override suspend fun beforNews(date: Long): BeforeNews {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
+    private val helper=DataBaseHelper.instance()
+    override suspend fun beforeNews(date: Long): BeforeNews {
+        val stories=helper.storyByDate(date)
+        return BeforeNews(TimeParseUtils.beforeTime2Long(date,1),
+            stories,false)
     }
 
 }
@@ -47,8 +58,15 @@ class BeforeNewsRepository :IBeforeNewsRepository,
     override val local: LocalBeforeNewsRepository
         get() = LocalBeforeNewsRepository()
 
-
-    override suspend fun beforNews(date: Long): BeforeNews {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    private val helper=DataBaseHelper.instance()
+    override suspend fun beforeNews(date: Long): BeforeNews {
+        val localResult=local.beforeNews(date)
+        return if(localResult.stories.isNullOrEmpty()){
+            val remoteResult=remote.beforeNews(date)
+            helper.insertStory(remoteResult.stories)
+            remoteResult
+        }else{
+            localResult
+        }
     }
 }

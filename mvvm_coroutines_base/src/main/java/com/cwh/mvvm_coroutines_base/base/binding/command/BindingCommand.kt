@@ -1,5 +1,7 @@
 package com.cwh.mvvm_coroutines_base.base.binding.command
 
+import com.cwh.mvvm_coroutines_base.utils.LogUtils
+
 /**
  * Description:不需要参数，也不会返回结果
  * Date：2019/12/31 0031-17:08
@@ -27,6 +29,7 @@ class BindingCommand {
     }
 
     fun execute(){
+        LogUtils.d("Command","Call Excute")
         if(action!=null && canExecute()){
             action!!.call()
         }

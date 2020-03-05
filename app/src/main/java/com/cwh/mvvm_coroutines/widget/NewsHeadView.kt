@@ -64,11 +64,15 @@ class NewsHeadView(val context: Context,val news:MutableList<TopStory>) {
 
     private var isLoop=false
 
+    private var mCurrentItem=0
+
     private val mHandler= object :Handler(Looper.getMainLooper()){
         override fun handleMessage(msg: Message) {
             if(msg.what==START_LOOP){
                 if(isLoop){
-                    mViewPager.currentItem=mViewPager.currentItem+1
+                    if(mViewPager.childCount>0 && news.size>1){
+                        mViewPager.currentItem=mViewPager.currentItem+1
+                    }
                     sendEmptyMessageDelayed(START_LOOP,5000)
                 }
 
@@ -87,6 +91,7 @@ class NewsHeadView(val context: Context,val news:MutableList<TopStory>) {
         if(!isLoop){
             isLoop=true
             mHandler.sendEmptyMessageDelayed(START_LOOP,5000)
+            mViewPager.setCurrentItem(mCurrentItem,false)
         }
     }
 
@@ -96,6 +101,22 @@ class NewsHeadView(val context: Context,val news:MutableList<TopStory>) {
     fun stopLoop(){
         isLoop=false
         mHandler.removeCallbacksAndMessages(null)
+        mCurrentItem=mViewPager.currentItem
+    }
+
+    /**
+     * 更新头部数据
+     */
+    fun notifyDataChange(topNews: List<TopStory>){
+        news.clear()
+        news.addAll(topNews)
+        mViewPager.adapter?.notifyDataSetChanged()
+        mContainer.removeAllViews()
+        mIndicators.clear()
+        initContainer()
+        if(news.size>1){
+            mViewPager.setCurrentItem(1000*news.size,false)
+        }
     }
 
     private fun createView() {
@@ -138,10 +159,10 @@ class NewsHeadView(val context: Context,val news:MutableList<TopStory>) {
                     .inflate(R.layout.view_pager_item,parent,false))
             }
 
-            override fun getItemCount()=if(news.isNotEmpty()){
+            override fun getItemCount()=if(news.size>1){
                 Int.MAX_VALUE
             }else{
-                0
+                news.size
             }
 
             override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -164,8 +185,10 @@ class NewsHeadView(val context: Context,val news:MutableList<TopStory>) {
 
             }
         }
+        if(news.size>1){
+            mViewPager.setCurrentItem(1000*news.size,false)
+        }
 
-        mViewPager.setCurrentItem(1000*news.size,false)
 
 
         mViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -178,6 +201,10 @@ class NewsHeadView(val context: Context,val news:MutableList<TopStory>) {
 //                LogUtils.d("ViewPager","position is ${position%news.size}")
 //                LogUtils.d("ViewPager","positionOffset : $positionOffset")
 //                LogUtils.d("ViewPager","positionOffsetPixels : $positionOffsetPixels")
+                if(news.size<=1){
+                    return
+                }
+
                 //现在选中的position
                 var selViewPosition=position%news.size
                 if(positionOffset<=0.1 && positionOffset>0 && mDirection<0){
@@ -238,7 +265,7 @@ class NewsHeadView(val context: Context,val news:MutableList<TopStory>) {
                 //SCROLL_STATE_IDLE==空闲状态
                 //SCROLL_STATE_DRAGGING==正在滑动
                 //SCROLL_STATE_SETTLING==自然沉降
-                if(state==SCROLL_STATE_IDLE){
+                if(state==SCROLL_STATE_IDLE && news.size>1){
                     val realPosition=mSelPosition%news.size
                     mIndicators.forEachIndexed{index,view->
                         if(index==realPosition){

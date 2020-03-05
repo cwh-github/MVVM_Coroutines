@@ -1,6 +1,5 @@
 package com.cwh.mvvm_coroutines.db.dao
 
-import androidx.lifecycle.MutableLiveData
 import androidx.room.*
 import com.cwh.mvvm_coroutines.model.NewsDetails
 
@@ -14,7 +13,7 @@ interface NewsDetailsDao {
 
 
     @Query("Select * From NewsDetails Where newsId=:newsId")
-    suspend fun query(newsId:Long):MutableLiveData<NewsDetails?>
+    suspend fun query(newsId:Long): NewsDetails?
 
     @Update(onConflict = OnConflictStrategy.REPLACE )
     suspend fun update(newsDetails: NewsDetails)

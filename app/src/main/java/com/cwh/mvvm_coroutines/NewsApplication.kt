@@ -1,6 +1,7 @@
 package com.cwh.mvvm_coroutines
 
 import com.cwh.mvvm_coroutines_base.BaseApplication
+import com.facebook.stetho.Stetho
 
 /**
  * Description:
@@ -9,7 +10,7 @@ import com.cwh.mvvm_coroutines_base.BaseApplication
  */
 class NewsApplication :BaseApplication(){
     override fun init() {
-
+        Stetho.initializeWithDefaults(this)
     }
 
 }

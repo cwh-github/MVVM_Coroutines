@@ -9,4 +9,4 @@ import com.cwh.mvvm_coroutines.model.Story
  *
  * @param date 新闻对应的时间
  */
-data class BeforeNews(val date:String,val stories: List<Story>,val isTime:Boolean)
+data class BeforeNews(val date:Long,var stories: List<Story>?,val isTime:Boolean)

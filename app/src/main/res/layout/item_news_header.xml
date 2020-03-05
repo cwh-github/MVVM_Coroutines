@@ -7,8 +7,9 @@
 
    <androidx.viewpager2.widget.ViewPager2
        android:id="@+id/mViewPager"
+       app:layout_constraintTop_toTopOf="parent"
        android:layout_width="match_parent"
-       android:layout_height="match_parent"/>
+       android:layout_height="340dp"/>
 
     <LinearLayout
         android:orientation="horizontal"

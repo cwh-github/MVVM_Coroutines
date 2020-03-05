@@ -28,6 +28,9 @@ object TimeParseUtils {
      * 如：20200303  3月2日
      */
     fun mothAndDay(date: Long):String{
+        if(date<100){
+            return date.toString()
+        }
         val dateStr=date.toString()
         val month=dateStr.substring(4,6).toInt()
         val day=dateStr.substring(6).toInt()

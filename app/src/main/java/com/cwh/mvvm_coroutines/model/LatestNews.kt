@@ -1,9 +1,11 @@
 package com.cwh.mvvm_coroutines.model
 
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.cwh.mvvm_coroutines.db.Convert
+import java.io.Serializable
 
 /**
  * Description:
@@ -11,9 +13,9 @@ import com.cwh.mvvm_coroutines.db.Convert
  * Author: cwh
  */
 data class LatestNews(
-    val date: String,
-    val stories: List<Story>,
-    val top_stories: List<TopStory>
+    val date: Long,
+    val stories: List<Story>?,
+    val top_stories: List<TopStory>?
 )
 
 /**
@@ -28,34 +30,34 @@ data class LatestNews(
 "type": 0,
 "id": 9720954
  */
-
+//Room 中属性必选为var,且必须有构造函数
 @Entity
 @TypeConverters(Convert::class)
 data class Story(
-    val ga_prefix: String,
+    var ga_prefix: String,
     /**
      * 作者信息
      */
-    val hint: String,
+    var hint: String,
     /**
      * 文章详情对应的id
      */
     @PrimaryKey(autoGenerate = false)
-    val id: Int,
+    var id: Int,
     /**
      * 渐变色对应的启始颜色  0xb3a87d
      */
-    val image_hue: String,
+    var image_hue: String,
     /**
      * 对应的主题图片
      */
-    val images: List<String>,
-    val title: String,
-    val type: Int,
+    var images: ArrayList<String>?,
+    var title: String,
+    var type: Int,
     /**
      * 文章详情对应的url
      */
-    val url: String,
+    var url: String,
     /**
      * 是否收藏
      */
@@ -67,8 +69,19 @@ data class Story(
     /**
      * news对应的时间
      */
-    var date:Long
-)
+    var date:Long,
+
+    /**
+     * 是否是时间type
+     */
+    var isTime:Boolean=false,
+    //显示顺序
+    var orderNum:Int
+
+):Serializable{
+    constructor():this("","",0,"",null,"",
+        0,"",false,false,0L,false,0)
+}
 
 /**
  *
@@ -83,25 +96,27 @@ data class Story(
  */
 @Entity
 data class TopStory(
-    val ga_prefix: String,
+    var ga_prefix: String,
     /**
         *作者信息
      */
-    val hint: String?,
+    var hint: String?,
     /**
     `对应的文章id
      */
     @PrimaryKey(autoGenerate = false)
-    val id: Int,
-    val image: String,
+    var id: Int,
+    var image: String,
     /**
        * 图片下面渐变色
      */
-    val image_hue: String?,
-    val title: String,
-    val type: Int,
+    var image_hue: String?,
+    var title: String,
+    var type: Int,
     /**
      * 文章详情对应的url
      */
-    val url: String
-)
+    var url: String
+){
+    constructor():this("","",0,"",null,"",0,"")
+}

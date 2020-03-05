@@ -19,7 +19,7 @@ data class NewsDetails(
      * 新闻对应的id
      */
     @PrimaryKey(autoGenerate = false)
-    val newsId:Long,
+    var newsId:Long,
     /**
      * 具体类容
      */
@@ -27,9 +27,11 @@ data class NewsDetails(
     /**
      * 头部image对应的url
      */
-    val image:String,
+    var image:String,
     /**
      * title
      */
-    val title:String,
-    val author:String)
+    var title:String,
+    var author:String){
+    constructor():this(0L,"","","","")
+}

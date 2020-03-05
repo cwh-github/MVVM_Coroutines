@@ -1,13 +1,12 @@
 package com.cwh.mvvm_coroutines_base.base.viewmodel
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.cwh.mvvm_coroutines_base.REQ_SUC
 import com.cwh.mvvm_coroutines_base.base.Entity
 import com.cwh.mvvm_coroutines_base.base.Event
 import com.cwh.mvvm_coroutines_base.base.ExceptionHandle
+import com.cwh.mvvm_coroutines_base.base.Result
 import com.cwh.mvvm_coroutines_base.base.repository.IRepository
 import com.cwh.mvvm_coroutines_base.utils.LogUtils
 import kotlinx.coroutines.*
@@ -21,7 +20,7 @@ import kotlinx.coroutines.flow.*
  * Transformations.map()，根据一个livedata实例生成另一个livedata实例，主要是观察
  * livedata的具体数据的变化，livedata的具体数据变化时，则其生成的实例的数据也发生变化
  *  Transformations.switchMap() 根据一个livedata实例生成另一个livedata实例，主要是观察
- *  livedata的变化，当这个livedata变化时，其生成的实例livedata的数据发生变化
+ *  livedata的变化和其值得变化，当这个livedata变化时，其生成的实例livedata的数据发生变化
  *
  *
  * Date：2019/12/31 0031-15:36
@@ -30,8 +29,11 @@ import kotlinx.coroutines.flow.*
 abstract class BaseViewModel<T : IRepository>(application: Application) :
     AndroidViewModel(application)
     , IBaseViewModel {
+    //带加载状态的结果,可以在各个加载时的函数中
+    //通过传不同的value来进行加载状态的修改
+    //val data=MutableLiveData<Result<String>>()
 
-    abstract var repo: T
+    abstract val repo: T
 
     val mDefUIEvent = DefUIEvent()
 
@@ -108,7 +110,7 @@ abstract class BaseViewModel<T : IRepository>(application: Application) :
                     error(e)
                 }
             } finally {
-                finally
+                finally()
             }
         }
 
@@ -137,19 +139,20 @@ abstract class BaseViewModel<T : IRepository>(application: Application) :
             mDefUIEvent.mToastEvent.value = Event("${it.code} : ${it.message}")
         },
         onComplete: () -> Unit
+
     ) {
         launchOnUI {
             handleException({
-                onStart
+                onStart()
                 if (isLaunchOnIO) {
-                    launchOnIO { block }
+                    launchOnIO { block() }
                 } else {
-                    block
+                    block()
                 }
             }, {
                 onError(ExceptionHandle.handleException(it))
             }, {
-                onComplete
+                onComplete()
             })
 
         }
@@ -188,6 +191,7 @@ abstract class BaseViewModel<T : IRepository>(application: Application) :
     ) {
         launchOnUI {
             handleException({
+                //data.postValue(Result.loading(null))
                 onStart()
                 if (isLaunchOnIO) {
                     withContext(Dispatchers.IO) {
@@ -198,14 +202,18 @@ abstract class BaseViewModel<T : IRepository>(application: Application) :
                 }
             }, { result ->
                 if (result.code == REQ_SUC) {
+                    //data.value= Result.success(result.data)
                     onSuccess(result.data)
                 } else {
                     onFail(result.msg, result.code)
+                    //data.value= Result.fail(result.msg,result.code)
                 }
             }, {
                 onError(ExceptionHandle.handleException(it))
+                //data.value= Result.error(it.message,null)
             }, {
                 onComplete()
+                //data.value= Result.complete()
             })
         }
 
@@ -250,9 +258,6 @@ abstract class BaseViewModel<T : IRepository>(application: Application) :
 
         val mToastEvent = MutableLiveData<Event<String>>()
 
-        fun test(){
-
-        }
 
         /**
          * 是否显示正在加载的View  true:显示，false: 隐藏

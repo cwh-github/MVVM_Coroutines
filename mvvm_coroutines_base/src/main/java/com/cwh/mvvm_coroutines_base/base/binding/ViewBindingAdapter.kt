@@ -14,7 +14,7 @@ import com.cwh.mvvm_coroutines_base.base.click
 /**
  * 定义View的click事件，添加了防多次点击的方法
  */
-@BindingAdapter("onClickCommand",requireAll = false)
+@BindingAdapter("app:onClickCommand",requireAll = false)
 fun onClickCommand(view: View,command: BindingCommand){
     view.click {
         command.execute()

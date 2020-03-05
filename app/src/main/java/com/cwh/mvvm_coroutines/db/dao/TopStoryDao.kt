@@ -1,6 +1,5 @@
 package com.cwh.mvvm_coroutines.db.dao
 
-import androidx.lifecycle.MutableLiveData
 import androidx.room.*
 import com.cwh.mvvm_coroutines.model.TopStory
 
@@ -12,12 +11,12 @@ import com.cwh.mvvm_coroutines.model.TopStory
 @Dao
 interface TopStoryDao{
 
-    @Query("Select * From TopStory ")
-    suspend fun query():MutableLiveData<List<TopStory>?>
+    @Query("Select * From TopStory order by id desc")
+    suspend fun query(): List<TopStory>?
 
     @Query("Delete From TopStory")
     suspend fun delete()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(stories: List<TopStory>)
+    suspend fun insert(stories: List<TopStory>?)
 }

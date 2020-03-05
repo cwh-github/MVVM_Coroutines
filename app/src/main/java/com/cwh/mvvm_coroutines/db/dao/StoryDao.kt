@@ -1,6 +1,5 @@
 package com.cwh.mvvm_coroutines.db.dao
 
-import androidx.lifecycle.MutableLiveData
 import androidx.room.*
 import com.cwh.mvvm_coroutines.model.Story
 
@@ -12,23 +11,23 @@ import com.cwh.mvvm_coroutines.model.Story
 @Dao
 interface StoryDao {
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(story: Story)
 
-    @Insert
-    suspend fun insert(stories:List<Story>)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insert(stories:List<Story>?)
 
     @Update
     suspend fun update(story: Story)
 
     @Query("Select * From Story where id=:id")
-    suspend fun query(id:Long):MutableLiveData<Story?>
+    suspend fun query(id:Long):Story?
 
-    @Query("Select * From Story Where date=:date order by id desc")
-    suspend fun queryByDate(date:Long):MutableLiveData<List<Story>?>
+    @Query("Select * From Story Where date=:date order by orderNum asc")
+    suspend fun queryByDate(date:Long):List<Story>?
 
-    @Query("Select * From story where date= (Select MAX(date) From story) order by id desc ")
-    suspend fun queryLatestStory():MutableLiveData<List<Story>?>
+    @Query("Select * From story where date= (Select MAX(date) From story) order by orderNum asc ")
+    suspend fun queryLatestStory(): List<Story>?
 
     @Query("Delete From story where date<:date")
     suspend fun deleteStory(date:Long)
