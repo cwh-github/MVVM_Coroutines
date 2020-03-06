@@ -54,17 +54,20 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
         initHeadView(topStory)
         mRefresh.isRefreshing = true
         mViewModel.latestNewsList()
-        mRefresh.setOnRefreshListener {
-            mViewModel.latestNewsList()
-        }
+//        mRefresh.setOnRefreshListener {
+//            mViewModel.latestNewsList()
+//        }
     }
 
     override fun initViewObserver() {
         mViewModel.latestNews.observe(this, Observer {
             when (it.status) {
                 Status.LOADING -> mRefresh.isRefreshing = true
-                Status.COMPLETE -> mRefresh.isRefreshing = false
-                Status.SUCCESS -> initRecyclerView(it.data!!)
+                Status.ERROR -> mRefresh.isRefreshing = false
+                Status.SUCCESS -> {
+                    initRecyclerView(it.data!!)
+                    mRefresh.isRefreshing=false
+                }
             }
         })
 
@@ -77,9 +80,6 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
                         mAdapter!!.addData(formatData(it))
                         mAdapter!!.loadMoreSuccess()
                     }?:mAdapter!!.loadNoMoreData()
-
-                }
-                Status.COMPLETE->{
 
                 }
 

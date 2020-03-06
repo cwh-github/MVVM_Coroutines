@@ -135,11 +135,8 @@ abstract class BaseViewModel<T : IRepository>(application: Application) :
         isLaunchOnIO: Boolean = false,
         onStart: () -> Unit = {},
         block: suspend CoroutineScope.() -> Unit,
-        onError: (ExceptionHandle.ResponseThrowable) -> Unit = {
-            mDefUIEvent.mToastEvent.value = Event("${it.code} : ${it.message}")
-        },
-        onComplete: () -> Unit
-
+        onError: (ExceptionHandle.ResponseThrowable) -> Unit,
+        onComplete: () -> Unit={}
     ) {
         launchOnUI {
             handleException({
@@ -151,6 +148,8 @@ abstract class BaseViewModel<T : IRepository>(application: Application) :
                 }
             }, {
                 onError(ExceptionHandle.handleException(it))
+                mDefUIEvent.mToastEvent.value = Event("${ExceptionHandle.handleException(it).code} :" +
+                        " ${ExceptionHandle.handleException(it).message}")
             }, {
                 onComplete()
             })
@@ -184,10 +183,8 @@ abstract class BaseViewModel<T : IRepository>(application: Application) :
         onFail: (String, Int) -> Unit = { msg, _ ->
             mDefUIEvent.mToastEvent.value = Event(msg)
         },
-        onError: (ExceptionHandle.ResponseThrowable) -> Unit = {
-            mDefUIEvent.mToastEvent.value = Event("${it.code} : ${it.message}")
-        },
-        onComplete: () -> Unit
+        onError: (ExceptionHandle.ResponseThrowable) -> Unit,
+        onComplete: () -> Unit={}
     ) {
         launchOnUI {
             handleException({
@@ -211,9 +208,10 @@ abstract class BaseViewModel<T : IRepository>(application: Application) :
             }, {
                 onError(ExceptionHandle.handleException(it))
                 //data.value= Result.error(it.message,null)
+                mDefUIEvent.mToastEvent.value = Event("${ExceptionHandle.handleException(it).code} :" +
+                        " ${ExceptionHandle.handleException(it).message}")
             }, {
                 onComplete()
-                //data.value= Result.complete()
             })
         }
 

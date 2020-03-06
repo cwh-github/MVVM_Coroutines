@@ -43,7 +43,7 @@ data class Story(
      * 文章详情对应的id
      */
     @PrimaryKey(autoGenerate = false)
-    var id: Int,
+    var id: Long,
     /**
      * 渐变色对应的启始颜色  0xb3a87d
      */

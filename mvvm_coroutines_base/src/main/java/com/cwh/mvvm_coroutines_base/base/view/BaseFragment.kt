@@ -66,7 +66,7 @@ abstract class BaseFragment<VM : BaseViewModel<*>, V : ViewDataBinding> : Fragme
         val type = javaClass.genericSuperclass as? ParameterizedType
         return if (type != null) {
             val clz = type!!.actualTypeArguments[1] as Class<*>
-            ViewDataBinding::class.java != clz && clz.isAssignableFrom(ViewDataBinding::class.java)
+            ViewDataBinding::class.java != clz && ViewDataBinding::class.java.isAssignableFrom(clz)
         } else false
     }
 

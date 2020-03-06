@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.cwh.mvvm_coroutines_base.utils.ToastUtils
 import com.cwh.mvvm_coroutines_base.base.observerEvent
 import com.cwh.mvvm_coroutines_base.base.viewmodel.BaseViewModel
+import com.cwh.mvvm_coroutines_base.utils.LogUtils
 import java.lang.reflect.ParameterizedType
 
 /**
@@ -87,9 +88,10 @@ abstract class BaseActivity<VM : BaseViewModel<*>, V : ViewDataBinding> : AppCom
      */
     private fun isUseViewDataBinding(): Boolean {
         val type = javaClass.genericSuperclass as? ParameterizedType
+        LogUtils.d("Binding","$type")
         return if (type != null) {
             val clz = type!!.actualTypeArguments[1] as Class<*>
-            ViewDataBinding::class.java != clz && clz.isAssignableFrom(ViewDataBinding::class.java)
+            ViewDataBinding::class.java != clz && ViewDataBinding::class.java.isAssignableFrom(clz)
         } else false
     }
 

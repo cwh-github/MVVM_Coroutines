@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <View
+        android:id="@+id/mLine"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="#ebebeb"
+        />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        app:layout_constraintTop_toBottomOf="@id/mLine"
+        >
+
+
+        <ImageView
+            android:id="@+id/mImgUser"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:scaleType="centerCrop"
+            />
+
+        <TextView
+            android:id="@+id/mTvUserName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textColor="@color/color_text"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toRightOf="@id/mImgUser"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/mTvContent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="9dp"
+            android:lineSpacingExtra="2dp"
+            android:textColor="@color/color_text"
+            android:textSize="16sp"
+            app:layout_constraintLeft_toLeftOf="@id/mTvUserName"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/mTvUserName" />
+
+        <TextView
+            android:id="@+id/mTvReply"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="2dp"
+            android:layout_marginTop="5dp"
+            android:visibility="gone"
+            android:textColor="#989898"
+            android:textSize="16sp"
+            app:layout_constraintLeft_toLeftOf="@id/mTvUserName"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/mTvContent" />
+
+        <TextView
+            android:id="@+id/mTvTime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="@id/mTvUserName"
+            app:layout_constraintTop_toBottomOf="@id/mTvReply"
+            app:layout_constraintWidth_percent="0.35"
+            android:layout_marginTop="20dp"
+            android:textSize="14sp"
+            android:singleLine="true"
+            android:textColor="#bfbfbf"
+            android:ellipsize="end"
+            />
+
+        <TextView
+            android:id="@+id/mTvLike"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@id/mTvReply"
+            android:layout_marginTop="20dp"
+            app:layout_constraintRight_toLeftOf="@id/mImgMsg"
+            android:layout_marginRight="30dp"
+            android:drawableRight="@drawable/ic_like_small"
+            android:drawablePadding="3dp"
+            />
+        <ImageView
+            android:id="@+id/mImgMsg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/mTvReply"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="22dp"
+            android:src="@drawable/ic_message_small"
+            />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

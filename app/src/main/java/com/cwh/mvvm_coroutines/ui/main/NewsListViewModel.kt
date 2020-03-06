@@ -50,8 +50,8 @@ class NewsListViewModel(application: Application) :
         }, block = {
             val result = repo.latestNews()
             latestNews.value = Result.success(result)
-        }, onComplete = {
-            latestNews.value = Result.complete()
+        },onError = {
+            latestNews.value= Result.error(null,null)
         })
 
     }
@@ -70,9 +70,7 @@ class NewsListViewModel(application: Application) :
             },onError = {
                 beforeNews.value= Result.error(it.message,null)
             }
-            , onComplete = {
-                beforeNews.value= Result.complete()
-            }
+
         )
     }
 

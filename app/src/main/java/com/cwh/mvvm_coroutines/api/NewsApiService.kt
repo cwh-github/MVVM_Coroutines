@@ -1,6 +1,8 @@
 package com.cwh.mvvm_coroutines.api
 
 import com.cwh.mvvm_coroutines.model.BeforeNews
+import com.cwh.mvvm_coroutines.model.CommentInfo
+import com.cwh.mvvm_coroutines.model.CommentList
 import com.cwh.mvvm_coroutines.model.LatestNews
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -39,5 +41,27 @@ interface NewsApiService{
      */
     @GET("https://daily.zhihu.com/story/{id}")
     suspend fun newsDetails(@Path("id")id:Long): Response<ResponseBody>
+
+    /**
+     * 获取评论数和点赞数等数据
+     */
+    //https://news-at.zhihu.com/api/4/story-extra/1848590
+    @GET("story-extra/{id}")
+    suspend fun getNewsComments(@Path("id")id:Long):CommentInfo
+
+
+    /**
+     * 获取长评论
+     */
+    //https://news-at.zhihu.com/api/4/story/8997528/long-comments
+    @GET("story/{id}/long-comments")
+    suspend fun getNewsLongComments(@Path("id") id :Long):CommentList
+
+    /**
+     * 获取短评论
+     */
+    //https://news-at.zhihu.com/api/4/story/4232852/short-comments
+    @GET("story/{id}/short-comments")
+    suspend fun getNewsShortComments(@Path("id") id:Long):CommentList
 
 }

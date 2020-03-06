@@ -1,5 +1,6 @@
 package com.cwh.mvvm_coroutines.utils
 
+import com.cwh.mvvm_coroutines_base.utils.TimeCovertUtils
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -71,6 +72,31 @@ object TimeParseUtils {
         }else{
             "$value"
         }
+    }
+
+    /**
+     * 将秒转换成月日时分
+     * 如：今天 13:45  03-06 14:23
+     *
+     *
+     */
+    fun formatTime(time:Long):String{
+        //yyyy-mm-dd HH:MM
+        val dateString=TimeCovertUtils.convertToDate(time*1000)
+        val hourAndMin=dateString.substring(11)
+        val calendar=Calendar.getInstance()
+        val simpleDate= SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
+        calendar.time=simpleDate.parse(simpleDate.format(time*1000))
+        val year=calendar.get(Calendar.YEAR)
+        val month=calendar.get(Calendar.MONTH)+1
+        val day=calendar.get(Calendar.DAY_OF_MONTH)
+        val currentYear=TimeCovertUtils.covertYear()
+        val currentMonth=TimeCovertUtils.covertMonth()
+        val currentDay=TimeCovertUtils.covertDay()
+        if(year==currentYear && month==currentMonth && day==currentDay){
+            return "今天 $hourAndMin"
+        }
+        return "${dateString.substring(5,10)} $hourAndMin"
     }
 
 }

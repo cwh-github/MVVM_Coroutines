@@ -1,159 +1,164 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.details.StoryDetailsActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/mRefresh"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/mBot"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        tools:layout_editor_absoluteX="-26dp">
-
-        <WebView
-            android:id="@+id/mWebView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    <data class="StoryDetailsBinding">
+        <variable
+            name="storyDetailsViewModel"
+            type="com.cwh.mvvm_coroutines.ui.details.StoryDetailsViewModel" />
+    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/mBot"
         android:layout_width="match_parent"
-        android:layout_height="52dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:background="#f6f6f6"
-        >
+        android:layout_height="match_parent"
+        tools:context=".ui.details.StoryDetailsActivity">
 
-        <View
-            android:id="@+id/partLine"
-            android:layout_width="1dp"
-            android:layout_height="30dp"
-            android:background="#d3d3d3"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/mRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/mBot"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            tools:layout_editor_absoluteX="-26dp">
+
+            <WebView
+                android:id="@+id/mWebView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/mBot"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginLeft="55dp"
-            />
+            android:background="#f6f6f6">
 
-        <ImageView
-            android:id="@+id/mImgBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_back"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/partLine"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:padding="12dp"
-            android:background="@drawable/default_ripple"
-            />
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            app:layout_constraintLeft_toRightOf="@id/partLine"
-            app:layout_constraintRight_toRightOf="parent"
-            android:orientation="horizontal"
-            android:weightSum="4"
-            >
+            <View
+                android:id="@+id/partLine"
+                android:layout_width="1dp"
+                android:layout_height="30dp"
+                android:background="#d3d3d3"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginLeft="55dp" />
 
-           <RelativeLayout
-               android:id="@+id/mRelMsg"
-               android:layout_width="0dp"
-               android:layout_weight="1"
-               android:background="@drawable/default_ripple"
-               android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/mImgBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_back"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/partLine"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:padding="12dp"
+                android:background="@drawable/default_ripple" />
 
-               <ImageView
-                   android:id="@+id/mImgMsg"
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:src="@drawable/ic_message"
-                   android:layout_centerVertical="true"
-                   android:layout_marginLeft="25dp"
-                   />
-               <TextView
-                   android:id="@+id/mTvMsgCount"
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:text="12"
-                   android:textSize="10sp"
-                   android:textColor="@color/color_text"
-                   android:layout_centerInParent="true"
-                   android:layout_toRightOf="@id/mImgMsg"
-                   android:layout_marginLeft="6dp"
-                   />
-
-           </RelativeLayout>
-            <RelativeLayout
-                android:id="@+id/mRelLike"
-                android:background="@drawable/default_ripple"
+            <LinearLayout
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                app:layout_constraintLeft_toRightOf="@id/partLine"
+                app:layout_constraintRight_toRightOf="parent"
+                android:orientation="horizontal"
+                android:weightSum="4">
 
-                <ImageView
-                    android:id="@+id/mImgLike"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_like"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="25dp"
-                    />
-                <TextView
-                    android:id="@+id/mTvLikeCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="12"
-                    android:textSize="10sp"
-                    android:textColor="@color/color_text"
-                    android:layout_centerInParent="true"
-                    android:layout_toRightOf="@id/mImgLike"
-                    android:layout_marginLeft="6dp"
-                    />
+                <RelativeLayout
+                    android:id="@+id/mRelMsg"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/default_ripple"
+                    android:layout_height="match_parent">
 
-            </RelativeLayout>
-            <RelativeLayout
-                android:id="@+id/mRelCollect"
-                android:background="@drawable/default_ripple"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent">
+                    <ImageView
+                        android:id="@+id/mImgMsg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_message"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="25dp" />
 
-                <ImageView
-                    android:id="@+id/mImgCollect"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_collect"
-                    android:layout_centerVertical="true"
-                    android:layout_centerInParent="true"
-                    />
-            </RelativeLayout>
-            <RelativeLayout
-                android:id="@+id/mRelShare"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:background="@drawable/default_ripple"
-                android:layout_height="match_parent">
+                    <TextView
+                        android:id="@+id/mTvMsgCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="10sp"
+                        android:text="@{storyDetailsViewModel.commentCount.toString()}"
+                        android:textColor="@color/color_text"
+                        android:layout_centerInParent="true"
+                        android:layout_toRightOf="@id/mImgMsg"
+                        android:layout_marginLeft="6dp" />
 
-                <ImageView
-                    android:id="@+id/mImgShare"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_share"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="25dp"
-                    />
-            </RelativeLayout>
+                </RelativeLayout>
 
-        </LinearLayout>
+                <RelativeLayout
+                    android:id="@+id/mRelLike"
+                    android:background="@drawable/default_ripple"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/mImgLike"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_like"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="25dp" />
+
+                    <TextView
+                        android:id="@+id/mTvLikeCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="10sp"
+                        android:text="@{storyDetailsViewModel.likeCount.toString()}"
+                        android:textColor="@color/color_text"
+                        android:layout_centerInParent="true"
+                        android:layout_toRightOf="@id/mImgLike"
+                        android:layout_marginLeft="6dp" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/mRelCollect"
+                    android:background="@drawable/default_ripple"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/mImgCollect"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_collect"
+                        android:layout_centerVertical="true"
+                        android:layout_centerInParent="true" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/mRelShare"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/default_ripple"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/mImgShare"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_share"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="25dp" />
+                </RelativeLayout>
+
+            </LinearLayout>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
