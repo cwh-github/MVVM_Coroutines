@@ -20,4 +20,7 @@ interface NewsDetailsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(newsDetails: NewsDetails)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(newsDetails: List<NewsDetails>)
 }

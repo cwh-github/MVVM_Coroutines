@@ -29,7 +29,7 @@ class RemoteBeforeNewsRepository:IBeforeNewsRepository, BaseRemoteRepository() {
     override suspend fun beforeNews(date: Long): BeforeNews {
         val result=apiService.beforeNewsData(date)
         result.stories?.forEachIndexed{index,story ->
-            story.orderNum=index
+            story.orderNum=result.stories!!.size-index
             story.date=result.date
         }
         return result
@@ -63,7 +63,7 @@ class BeforeNewsRepository :IBeforeNewsRepository,
         val localResult=local.beforeNews(date)
         return if(localResult.stories.isNullOrEmpty()){
             val remoteResult=remote.beforeNews(date)
-            helper.insertStory(remoteResult.stories)
+            helper.insertBeforeStory(remoteResult.stories)
             remoteResult
         }else{
             localResult

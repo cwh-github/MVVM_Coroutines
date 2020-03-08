@@ -2,6 +2,7 @@ package com.cwh.mvvm_coroutines.model
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 /**
@@ -11,8 +12,9 @@ import androidx.room.PrimaryKey
  */
 @Entity(foreignKeys = [ForeignKey(entity = Story::class,
     parentColumns = arrayOf("id"),
-    childColumns = arrayOf("newsId"),onDelete = ForeignKey.CASCADE,
+    childColumns = arrayOf("detailsId"),onDelete = ForeignKey.CASCADE,
     onUpdate = ForeignKey.CASCADE)]
+,indices = [Index(value = arrayOf("detailsId"),name="",unique = false)]
 )
 data class NewsDetails(
     /**
@@ -20,6 +22,8 @@ data class NewsDetails(
      */
     @PrimaryKey(autoGenerate = false)
     var newsId:Long,
+
+    var detailsId:Long,
     /**
      * 具体类容
      */
@@ -32,6 +36,20 @@ data class NewsDetails(
      * title
      */
     var title:String,
-    var author:String){
-    constructor():this(0L,"","","","")
+    var author:String,
+    /**
+     * 作者头像
+     */
+    var authorImage:String?,
+    /**
+     * 问题Title
+     */
+    var questionTitle:String?,
+    /**
+     * 头部头像tips
+     */
+    var imageTips:String?
+
+){
+    constructor():this(0L,0L,"","","","","","","")
 }

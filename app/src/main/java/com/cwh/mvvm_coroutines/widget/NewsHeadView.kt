@@ -22,6 +22,7 @@ import com.cwh.mvvm_coroutines_base.base.find
 import com.cwh.mvvm_coroutines_base.utils.DisplayUtils
 import com.cwh.mvvm_coroutines_base.utils.LogUtils
 import com.cwh.mvvm_coroutines.utils.GlideUtils
+import com.cwh.mvvm_coroutines_base.base.click
 
 /**
  * Description:
@@ -65,6 +66,8 @@ class NewsHeadView(val context: Context,val news:MutableList<TopStory>) {
     private var isLoop=false
 
     private var mCurrentItem=0
+
+    lateinit var onItemClick:(TopStory)->Unit
 
     private val mHandler= object :Handler(Looper.getMainLooper()){
         override fun handleMessage(msg: Message) {
@@ -181,6 +184,11 @@ class NewsHeadView(val context: Context,val news:MutableList<TopStory>) {
                     val gradientDrawable=GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP,
                         intArrayOf(endColor,startColor))
                     mViewHolder.mViewBg.background=gradientDrawable
+                    mViewHolder.itemView.click {
+                        if(::onItemClick.isInitialized){
+                            onItemClick(news)
+                        }
+                    }
                 }
 
             }

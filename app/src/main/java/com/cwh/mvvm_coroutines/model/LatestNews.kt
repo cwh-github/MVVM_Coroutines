@@ -76,7 +76,9 @@ data class Story(
      */
     var isTime:Boolean=false,
     //显示顺序
-    var orderNum:Int
+    var orderNum:Int,
+
+    var isTopStory: Boolean=false
 
 ):Serializable{
     constructor():this("","",0,"",null,"",

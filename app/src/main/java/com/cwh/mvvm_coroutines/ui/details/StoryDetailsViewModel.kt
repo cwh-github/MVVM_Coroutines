@@ -3,8 +3,12 @@ package com.cwh.mvvm_coroutines.ui.details
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import com.cwh.mvvm_coroutines.model.CommentInfo
+import com.cwh.mvvm_coroutines.model.NewsDetails
+import com.cwh.mvvm_coroutines.model.Story
 import com.cwh.mvvm_coroutines.model.repository.NewsDetailsRepository
+import com.cwh.mvvm_coroutines_base.base.Event
 import com.cwh.mvvm_coroutines_base.base.ExceptionHandle
+import com.cwh.mvvm_coroutines_base.base.Result
 import com.cwh.mvvm_coroutines_base.base.viewmodel.BaseViewModel
 
 /**
@@ -28,6 +32,35 @@ class StoryDetailsViewModel(application: Application) :
     val toastMsg=MutableLiveData<ExceptionHandle.ResponseThrowable>()
 
     /**
+     * 收藏或取消收藏
+     */
+    val isLike=MutableLiveData<Event<Boolean>>()
+
+    val mStory=MutableLiveData<Event<Story>>()
+
+    val mDetails=MutableLiveData<Result<NewsDetails>>()
+
+
+    /**
+     * 获取新闻详情
+     */
+    fun newsDetails(id:Long){
+        launch(
+            onStart = {
+                mDetails.value=Result.loading(null)
+            },
+            block = {
+                val details=repo.newsDetails(id)
+                mDetails.value= Result.success(details)
+            },
+            onError = {
+                mDetails.value= Result.error(null)
+            }
+
+        )
+    }
+
+    /**
      * 获取评论信息
      */
     fun commentInfo(id:Long){
@@ -45,7 +78,34 @@ class StoryDetailsViewModel(application: Application) :
             }
         )
 
+    }
 
+    /**
+     * 收藏story
+     */
+    fun likeOrUnLikeStory(id:Long){
+        launch(
+            block = {
+                val result=repo.likeOrUnLikeStory(id)
+                isLike.value=Event(result)
+            },
+            onError = {
+            }
+        )
+    }
+
+    fun storyById(id:Long){
+        launch(
+            block = {
+                val result=repo.storyById(id)
+                result?.let {
+                    mStory.value=Event(it)
+                }
+            },
+            onError = {
+
+            }
+        )
     }
 
 

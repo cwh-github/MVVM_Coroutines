@@ -1,24 +1,31 @@
 package com.cwh.mvvm_coroutines.ui.main
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cwh.mvvm_coroutines.BR
 import com.cwh.mvvm_coroutines.R
 import com.cwh.mvvm_coroutines.databinding.HomeViewDataBinding
+import com.cwh.mvvm_coroutines.down.DownloadStoriesService
 import com.cwh.mvvm_coroutines.model.BeforeNews
 import com.cwh.mvvm_coroutines.model.LatestNews
 import com.cwh.mvvm_coroutines.model.Story
 import com.cwh.mvvm_coroutines.model.TopStory
 import com.cwh.mvvm_coroutines.ui.details.StoryDetailsActivity
+import com.cwh.mvvm_coroutines.ui.like.LikeStoryActivity
 import com.cwh.mvvm_coroutines.utils.GlideUtils
+import com.cwh.mvvm_coroutines.utils.SPUtils
 import com.cwh.mvvm_coroutines.utils.TimeParseUtils
 import com.cwh.mvvm_coroutines.widget.NewsHeadView
 import com.cwh.mvvm_coroutines_base.base.Status
@@ -34,6 +41,7 @@ import kotlinx.android.synthetic.main.fragment_layout.mRecyclerView
 import kotlinx.android.synthetic.main.news_list_toolbar.view.*
 
 class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() {
+
     override val mViewModel: NewsListViewModel
             by lazy { createViewModel(this, NewsListViewModel::class.java) }
     override val layoutId: Int
@@ -47,9 +55,17 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
 
     private val mData= mutableListOf<Story>()
 
+    private val twoHour=2*60*60*1000
+
+    private lateinit var mImageDownLoad:ImageView
+
+    private lateinit var mTvProgress:TextView
+
+    private var mReceiver: MyBroadCastReceiver?=null
 
     override fun initDataAndView() {
         initToolBar()
+        registerReceiver()
         val topStory = mutableListOf<TopStory>()
         initHeadView(topStory)
         mRefresh.isRefreshing = true
@@ -67,6 +83,7 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
                 Status.SUCCESS -> {
                     initRecyclerView(it.data!!)
                     mRefresh.isRefreshing=false
+                    SPUtils.saveRefreshTime()
                 }
             }
         })
@@ -106,6 +123,13 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
     }
 
     private fun initToolBar() {
+        mTvProgress=mToolBar.find(R.id.mTvProgress)
+        mImageDownLoad=mToolBar.find(R.id.mImageDownload)
+        mImageDownLoad.click {
+            DownloadStoriesService.startService(this)
+            mImageDownLoad.isVisible=false
+            mTvProgress.isVisible=true
+        }
         val month = when (TimeCovertUtils.covertMonth()) {
             1 -> "一月"
             2 -> "二月"
@@ -131,10 +155,6 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
                 mRecyclerView.scrollToPosition(20)
             }
             mRecyclerView.smoothScrollToPosition(0)
-        }
-
-        mToolBar.mImageDownload.click {
-            ToastUtils.showToast(this, "Download")
         }
 
     }
@@ -164,10 +184,20 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
                 "知乎日报"
             }
         }
+
+        mToolBar.mTvTitle.click {
+            startActivity(Intent(this,LikeStoryActivity::class.java))
+        }
     }
 
     private fun initHeadView(data: MutableList<TopStory>) {
         mHeadView = NewsHeadView(this, data)
+        mHeadView.onItemClick={
+            val story=Story(it.ga_prefix,it.hint!!,it.id.toLong(),it.image_hue!!, arrayListOf(it.image),
+                it.title,it.type,it.url,false,false,it.id.toLong(),false,0)
+            startActivity(Intent(this,StoryDetailsActivity::class.java)
+                .putExtra("story",story))
+        }
     }
 
     override fun onStart() {
@@ -178,11 +208,20 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
     override fun onResume() {
         super.onResume()
         titleGreetings()
+        autoRefresh()
     }
 
     override fun onStop() {
         super.onStop()
         mHeadView.stopLoop()
+    }
+
+    private fun autoRefresh(){
+        if(kotlin.math.abs(System.currentTimeMillis() - SPUtils.getLastTime()) >=twoHour){
+            mRecyclerView.scrollToPosition(0)
+            mRefresh.isRefreshing=true
+            mViewModel.latestNewsList()
+        }
     }
 
     private fun initRecyclerView(data: LatestNews) {
@@ -329,13 +368,13 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
                         mImg = mViewHolder.mImg)
 
                     holder.itemView.click {
-                        startActivity(Intent(mContext,StoryDetailsActivity::class.java)
-                            .putExtra("story",story))
                         if(!story.isRead){
                             story.isRead=true
                             notifyDataSetChanged()
                             mViewModel.setStoryIsRead(story)
                         }
+                        startActivity(Intent(mContext,StoryDetailsActivity::class.java)
+                            .putExtra("story",story))
                     }
 
                 }
@@ -352,5 +391,44 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
 
     inner class NewsTimeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         val mTvTime=itemView.find<TextView>(R.id.mTvTime)
+    }
+
+    private fun registerReceiver() {
+        val localBroadcastManager = LocalBroadcastManager.getInstance(this)
+        val filter = IntentFilter()
+        filter.addAction(DownloadStoriesService.DOWN_LOAD_START)
+        filter.addAction(DownloadStoriesService.DOWN_LOAD_PROGRESS)
+        filter.addAction(DownloadStoriesService.DOWN_LOAD_COMPLETE)
+        mReceiver = MyBroadCastReceiver()
+        localBroadcastManager.registerReceiver(mReceiver!!, filter)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mReceiver?.let {
+            unregisterReceiver(it)
+        }
+    }
+
+    inner class MyBroadCastReceiver : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            when (intent!!.action) {
+                DownloadStoriesService.DOWN_LOAD_START -> {
+                    mTvProgress.isVisible=true
+                    mImageDownLoad.isVisible=false
+                }
+                DownloadStoriesService.DOWN_LOAD_PROGRESS -> {
+                    val progress=intent!!.getIntExtra(DownloadStoriesService.PROGRESS,0)
+                    mTvProgress.text="$progress %"
+                }
+                DownloadStoriesService.DOWN_LOAD_COMPLETE -> {
+                    mImageDownLoad.isVisible=true
+                    mTvProgress.text="0 %"
+                    mTvProgress.isVisible=false
+                    ToastUtils.showToast(this@NewsListActivity,"下载完成(•‾̑⌣‾̑•)✧˖°")
+                }
+            }
+        }
+
     }
 }

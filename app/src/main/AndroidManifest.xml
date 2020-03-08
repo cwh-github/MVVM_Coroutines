@@ -12,7 +12,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.comment.CommentActivity"></activity>
+        <service
+            android:name=".down.DownloadStoriesService"
+            android:exported="false"></service>
+
+        <activity
+            android:name=".ui.like.LikeStoryActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.comment.CommentActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.details.StoryDetailsActivity"
             android:screenOrientation="portrait" />

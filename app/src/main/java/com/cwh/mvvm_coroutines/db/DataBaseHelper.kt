@@ -42,9 +42,23 @@ class DataBaseHelper private constructor(){
     }
 
     /**
+     * 插入story
+     */
+    suspend fun insertBeforeStory(stories:List<Story>?){
+        db.storyDao().insertBefore(stories)
+    }
+
+    /**
      * 更新story
      */
     suspend fun updateStory(story: Story){
+        db.storyDao().update(story)
+    }
+
+    /**
+     * 更新story
+     */
+    suspend fun updateStory(story: List<Story>){
         db.storyDao().update(story)
     }
 
@@ -57,11 +71,10 @@ class DataBaseHelper private constructor(){
     }
 
     /**
-     * 设置是否已收藏
+     * 获取所有like story
      */
-    suspend fun storyLike(isLike:Boolean,story: Story){
-        story.isLike=isLike
-        updateStory(story)
+    suspend fun storyLike():List<Story>?{
+        return db.storyDao().queryLikeStory()
     }
 
     /**
@@ -117,7 +130,11 @@ class DataBaseHelper private constructor(){
     }
 
 
-    suspend fun insertDetailsS(newsDetails: NewsDetails){
+    suspend fun insertDetails(newsDetails: NewsDetails){
+        db.detailsDao().insert(newsDetails)
+    }
+
+    suspend fun insertDetails(newsDetails: List<NewsDetails>){
         db.detailsDao().insert(newsDetails)
     }
 

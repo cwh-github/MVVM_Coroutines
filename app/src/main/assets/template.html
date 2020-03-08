@@ -1,0 +1,113 @@
+<html lang="zh" data-hairline="true" data-theme="light">
+<head>
+    <meta charSet="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+    <meta name="renderer" content="webkit"/>
+    <style>
+.u-safeAreaInset-top {
+  height: constant(safe-area-inset-top) !important;
+  height: env(safe-area-inset-top) !important;
+
+}
+.u-safeAreaInset-bottom {
+  height: constant(safe-area-inset-bottom) !important;
+  height: env(safe-area-inset-bottom) !important;
+
+}
+
+    </style>
+    <link href="file:///android_asset/news_app.css" rel="stylesheet"/>
+    <link href="file:///android_asset/news_daily.css"
+          rel="stylesheet"/>
+    <script defer="" crossorigin="anonymous"
+            src="file:///android_asset/news.js"
+            data-sentry-config="{&quot;dsn&quot;:&quot;
+            https://65e244586890460588f00f2987137aa8@crash2.zhihu.com/193&quot;,
+&quot;sampleRate&quot;:0.1,&quot;release&quot;:&quot;397-9bc7930b&quot;,&quot;
+ignoreErrorNames&quot;:[&quot;NetworkError&quot;,&quot;SecurityError&quot;],
+&quot;ignoreErrors&quot;:[&quot;origin message&quot;,&quot;Network request failed&quot;,&quot
+;Loading chunk&quot;,&quot;这个系统不支持该功能。&quot;,&quot;Can&#x27;t find variable: webkit&quot;
+,&quot;Can&#x27;t find variable: $&quot;,&quot;内存不足&quot;,&quot;out of memory&quot;,&quot;
+DOM Exception 18&quot;,&quot;The operation is insecure&quot;,&quot;
+[object Event]&quot;,&quot;[object FileError]&quot;,&quot;[object DOMError]&quot;
+,&quot;[object Object]&quot;,&quot;拒绝访问。&quot;,&quot;Maximum call stack size exceeded&quot;
+,&quot;UploadError&quot;,&quot;无法 fetch&quot;,&quot;draft-js&quot;,&quot;
+缺少 JavaScript 对象&quot;,&quot;componentWillEnter&quot;
+,&quot;componentWillLeave&quot;,&quot;componentWillAppear&quot;,&quot;getInlineStyleAt&quot;
+,&quot;getCharacterList&quot;],&quot;whitelistUrls&quot;:[&quot;static.zhihu.com&quot;]}">
+    </script>
+</head>
+
+<body class="Daily-body">
+<div id="root">
+    <div class="App">
+        <div class="LoadingBar">
+
+        </div>
+        <main role="main" class="App-main">
+
+            <div>
+
+                <!-- <div class="Daily">
+                    <div class="ZhihuDailyOIABanner">
+                        <img class="ZhihuDailyOIABanner-logo" src="https://static.zhihu.com/heifetz/assets/zhihuDaily.3b5756bb.png"/><div class="ZhihuDailyOIABanner-text"><p class="ZhihuDailyOIABanner-title">知乎日报</p><p class="ZhihuDailyOIABanner-desc">每日提供高质量新闻资讯</p>
+                        </div><button class="ZhihuDailyOIABanner-button">打开 App</button>
+                    </div>
+                </div> -->
+
+                <!-- <header class="DailyHeader"><div class="DailyHeader-image"><img src="https://pic1.zhimg.com/v2-54a6e0477bfc6a08d9b62a26b89dd0ac_fhd.jpg" alt="头图"/><style data-emotion-css="14woxd8">.css-14woxd8{background-image:linear-gradient(0,rgba(179,146,125,1),rgba(179,146,125,0.9),rgba(179,146,125,0));}</style><div class="css-14woxd8"></div></div><p class="DailyHeader-title" style="font-size:22px">《红楼梦》有什么缺点或者不足？</p><p class="DailyHeader-imageSource">Pixabay / CC0</p>
+                </header> -->
+
+                <section class="DailyRichText DailyRichText-withTitle" style="font-size:16px">
+                    <div class="RichText ztext">
+                        <div class="main-wrap content-wrap">
+
+
+                            <div class="headline">
+
+                                <div class="img-place-holder"></div>
+
+
+                            </div>
+
+                            <div class="content-inner">
+                                    {content}
+
+<!--                                <div class="question">-->
+<!--                                    <h2 class="question-title"></h2>-->
+
+<!--                                    <div class="answer">-->
+
+<!--&lt;!&ndash;                                        <div class="meta">&ndash;&gt;-->
+<!--&lt;!&ndash;                                            <img class="avatar"&ndash;&gt;-->
+<!--&lt;!&ndash;                                                 src="http://pic2.zhimg.com/c11073229_is.jpg">&ndash;&gt;-->
+<!--&lt;!&ndash;                                            <span class="author">invalid s</span>&ndash;&gt;-->
+<!--&lt;!&ndash;                                            <a href="https://www.zhihu.com/question/63086852/answer/1045901746"&ndash;&gt;-->
+<!--&lt;!&ndash;                                               class="originUrl">查看知乎原文</a>&ndash;&gt;-->
+<!--&lt;!&ndash;                                        </div>&ndash;&gt;-->
+
+<!--                                        <div class="content">-->
+
+<!--                                            {content}-->
+
+<!--                                        </div>-->
+<!--                                    </div>-->
+
+
+<!--                                    <div class="view-more"><a-->
+<!--                                            href="http://www.zhihu.com/question/63086852">查看知乎讨论<span-->
+<!--                                            class="js-question-holder"></span></a></div>-->
+
+<!--                                </div>-->
+
+
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+</div>
+    </body>
+</html>
