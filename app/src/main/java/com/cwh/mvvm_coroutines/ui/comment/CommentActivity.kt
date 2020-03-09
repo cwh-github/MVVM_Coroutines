@@ -47,7 +47,7 @@ class CommentActivity : BaseActivity<CommentViewModel,CommentBinding>() {
         mLongCount=intent.getIntExtra("mLongCount",0)
         mShortCount=intent.getIntExtra("mShortCount",0)
         mToolBar.mImgBack.click { finish() }
-        mToolBar.mTvTitle.text="${mCount}条评论"
+        mToolBar.mTvTitle.text=if(mCount>0){"${mCount}条评论"}else{"评论"}
         mViewModel.commentList(id)
         mRefresh.isRefreshing=true
     }
@@ -150,9 +150,9 @@ class CommentActivity : BaseActivity<CommentViewModel,CommentBinding>() {
                 TITLE_TYPE->{
                     val mViewHolder=holder as TitleViewHolder
                     mViewHolder.mTvTitle.text=if(comment.isLong){
-                        "${mLongCount}条长评"
+                        if(mLongCount>0){"${mLongCount}条长评"}else{"长评"}
                     }else{
-                        "${mShortCount}条短评"
+                        if(mShortCount>0){"${mShortCount}条短评"}else{"短评"}
                     }
                 }
 

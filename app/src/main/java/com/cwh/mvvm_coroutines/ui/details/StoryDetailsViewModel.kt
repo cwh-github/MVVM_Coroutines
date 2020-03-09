@@ -2,9 +2,11 @@ package com.cwh.mvvm_coroutines.ui.details
 
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
+import com.cwh.mvvm_coroutines.model.BeforeNews
 import com.cwh.mvvm_coroutines.model.CommentInfo
 import com.cwh.mvvm_coroutines.model.NewsDetails
 import com.cwh.mvvm_coroutines.model.Story
+import com.cwh.mvvm_coroutines.model.repository.BeforeNewsRepository
 import com.cwh.mvvm_coroutines.model.repository.NewsDetailsRepository
 import com.cwh.mvvm_coroutines_base.base.Event
 import com.cwh.mvvm_coroutines_base.base.ExceptionHandle
@@ -39,6 +41,11 @@ class StoryDetailsViewModel(application: Application) :
     val mStory=MutableLiveData<Event<Story>>()
 
     val mDetails=MutableLiveData<Result<NewsDetails>>()
+
+    //之前的news
+    val beforeNews=MutableLiveData<Result<BeforeNews>>()
+
+    val otherRepo=BeforeNewsRepository()
 
 
     /**
@@ -106,6 +113,35 @@ class StoryDetailsViewModel(application: Application) :
 
             }
         )
+    }
+
+    /**
+     * 获取之前指定日期的新闻
+     */
+    fun beforeNewsList(date: Long) {
+        launch(
+            onStart = {
+                beforeNews.value= Result.loading(null)
+            },
+            block = {
+                val result=otherRepo.beforeNews(date)
+                beforeNews.value= Result.success(result)
+            },onError = {
+                beforeNews.value= Result.error(it.message,null)
+            }
+
+        )
+    }
+    /**
+    * 设置story 已读
+    */
+    fun setStoryIsRead(story: Story){
+        launchOnUI {
+            val repoStory=repo.storyById(story.id)
+            story.isLike=repoStory?.isLike?:false
+            story.isRead=true
+            repo.readStory(story)
+        }
     }
 
 

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data class="StoryDetailsFragmentBinding">
+        <variable
+            name="fragmentStoryDetails"
+            type="com.cwh.mvvm_coroutines.ui.details.StoryDetailsViewModel" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/mRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/mScrollView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical">
+
+                <LinearLayout
+                    android:id="@+id/mLinea"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/mImageTop"
+                            android:layout_width="match_parent"
+                            android:layout_height="360dp"
+                            android:scaleType="centerCrop" />
+
+                        <View
+                            android:id="@+id/mViewBg"
+                            android:layout_width="match_parent"
+                            android:layout_height="170dp"
+                            android:layout_marginTop="190dp" />
+
+                        <View
+                            android:id="@+id/mViewBg2"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_below="@id/mViewBg"
+                            android:visibility="invisible" />
+
+                        <TextView
+                            android:id="@+id/mTvTips"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignBottom="@id/mViewBg2"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginRight="20dp"
+                            android:layout_marginBottom="10dp"
+                            android:ellipsize="end"
+                            android:singleLine="true"
+                            android:textColor="#90ffffff"
+                            android:textSize="10sp" />
+
+                        <TextView
+                            android:id="@+id/mTvTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_above="@id/mTvTips"
+                            android:layout_marginLeft="20dp"
+                            android:layout_marginRight="20dp"
+                            android:layout_marginBottom="10dp"
+                            android:ellipsize="end"
+                            android:maxLines="2"
+                            android:text="1234455"
+                            android:textColor="@color/color_white"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/mTvAnswerTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/mViewBg2"
+                            android:paddingLeft="20dp"
+                            android:paddingTop="20dp"
+                            android:paddingRight="20dp"
+                            android:paddingBottom="10dp"
+                            android:textColor="@color/color_text"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:id="@+id/mImgAuthor"
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_below="@id/mTvAnswerTitle"
+                            android:layout_marginLeft="20dp"
+                            android:layout_marginTop="12dp"
+                            android:scaleType="centerCrop" />
+
+                        <TextView
+                            android:id="@+id/mTvAuthor"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/mTvAnswerTitle"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginRight="20dp"
+                            android:layout_toRightOf="@id/mImgAuthor"
+                            android:textColor="#999999"
+                            android:textSize="15sp" />
+
+                    </RelativeLayout>
+
+                    <WebView
+                        android:id="@+id/mWebView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

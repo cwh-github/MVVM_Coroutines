@@ -23,6 +23,7 @@ import com.cwh.mvvm_coroutines.model.LatestNews
 import com.cwh.mvvm_coroutines.model.Story
 import com.cwh.mvvm_coroutines.model.TopStory
 import com.cwh.mvvm_coroutines.ui.details.StoryDetailsActivity
+import com.cwh.mvvm_coroutines.ui.details.StoryDetailsActivityForFragment
 import com.cwh.mvvm_coroutines.ui.like.LikeStoryActivity
 import com.cwh.mvvm_coroutines.utils.GlideUtils
 import com.cwh.mvvm_coroutines.utils.SPUtils
@@ -164,20 +165,20 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
         val hour = curTime.split(":")[0].toInt()
         mToolBar.mTvTitle.text = when {
             (hour in 6..10) -> {
-                "早上好~"
+                "早上好~ ( ‘-ωก̀ )"
             }
             (hour in 12..13) -> {
-                "中午好~"
+                "中午好~ (*•̀ㅂ•́)و"
             }
             (hour in 15..16) -> {
-                "下午好~"
+                "下午好~  ♪ (*´∀`*)"
             }
             (hour in 19..22) -> {
-                "晚上好~"
+                "晚上好~ (•̀ᴗ•́)و"
             }
 
             (hour in 22..24) || (hour in 0..4) -> {
-                "早点休息~"
+                "早点休息~ (:3[」]="
             }
 
             else -> {
@@ -368,13 +369,28 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
                         mImg = mViewHolder.mImg)
 
                     holder.itemView.click {
+//                        startActivity(Intent(mContext,StoryDetailsActivity::class.java)
+//                            .putExtra("story",story))
+                        val list=ArrayList<Story>()
+                        var index=0
+                        mData.forEach {
+                            if(!it.isTime){
+                                list.add(it)
+                                if(it.id==story.id){
+                                    index=list.size-1
+                                }
+                            }
+                        }
+                        startActivity(Intent(mContext,StoryDetailsActivityForFragment::class.java)
+                            .putExtra("mStoryList",list)
+                            .putExtra("index",index)
+                        )
                         if(!story.isRead){
                             story.isRead=true
                             notifyDataSetChanged()
                             mViewModel.setStoryIsRead(story)
                         }
-                        startActivity(Intent(mContext,StoryDetailsActivity::class.java)
-                            .putExtra("story",story))
+
                     }
 
                 }

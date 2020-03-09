@@ -176,4 +176,11 @@ class NewsDetailsRepository : BaseRepository<RemoteNewsDetailsRepository,
         return local.storyById(id)
     }
 
+
+    //设置story 已读
+    suspend fun readStory(story:Story){
+        story.isRead=true
+        helper.updateStory(story)
+    }
+
 }

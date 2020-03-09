@@ -61,8 +61,19 @@ class BeforeNewsRepository :IBeforeNewsRepository,
     private val helper=DataBaseHelper.instance()
     override suspend fun beforeNews(date: Long): BeforeNews {
         val localResult=local.beforeNews(date)
-        return if(localResult.stories.isNullOrEmpty()){
+        return if(localResult.stories.isNullOrEmpty() || localResult.stories!!.size<=5){
             val remoteResult=remote.beforeNews(date)
+             if(localResult.stories!=null && remoteResult.stories!=null){
+                 for(localStory in localResult.stories!!){
+                     for(remoteStory in remoteResult.stories!!){
+                        if(localStory.id == remoteStory.id){
+                            remoteStory.isRead=localStory.isRead
+                            remoteStory.isLike=localStory.isLike
+                            continue
+                        }
+                     }
+                 }
+             }
             helper.insertBeforeStory(remoteResult.stories)
             remoteResult
         }else{
