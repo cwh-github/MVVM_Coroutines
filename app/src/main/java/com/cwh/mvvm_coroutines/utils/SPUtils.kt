@@ -12,6 +12,7 @@ import com.cwh.mvvm_coroutines_base.utils.ConUtils
 object SPUtils {
 
     const val LAST_REFRESH_TIME="last_refresh_time"
+    const val LAST_CLEAN_TIME="last_clean_time"
     const val SP_NAME="config"
 
     fun getLastTime():Long{
@@ -23,6 +24,18 @@ object SPUtils {
         ConUtils.mContext().getSharedPreferences(SP_NAME, Context.MODE_PRIVATE)
             .edit {
                 putLong(LAST_REFRESH_TIME,System.currentTimeMillis())
+            }
+    }
+
+    fun getLastCleanTime()= run {
+        ConUtils.mContext().getSharedPreferences(SP_NAME, Context.MODE_PRIVATE)
+            .getLong(LAST_CLEAN_TIME,0)
+    }
+
+    fun saveCleanTime(){
+        ConUtils.mContext().getSharedPreferences(SP_NAME, Context.MODE_PRIVATE)
+            .edit {
+                putLong(LAST_CLEAN_TIME,System.currentTimeMillis())
             }
     }
 

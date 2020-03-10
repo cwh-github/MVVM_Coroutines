@@ -101,12 +101,20 @@ class DataBaseHelper private constructor(){
 
     /**
      * 删除对应的story
-     * 保留现在开始二十天之前数据
+     * 删除比date小的数据
      */
-    suspend fun deleteStory(){
-        val currentDate=TimeParseUtils.currentTime2Long()
-        db.storyDao().deleteStory(TimeParseUtils.beforeTime2Long(currentDate,20))
+    suspend fun deleteStory(date:Long){
+        db.storyDao().deleteStory(date)
     }
+
+    /**
+     * 获取比date小的story
+     */
+    suspend fun queryByLessDate(date: Long):List<Story>?{
+        return db.storyDao().queryByLessDate(date)
+    }
+
+
 
     /**
      * 查询获取所有的Topstories

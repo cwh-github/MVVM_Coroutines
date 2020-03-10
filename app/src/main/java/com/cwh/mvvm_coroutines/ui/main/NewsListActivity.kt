@@ -17,11 +17,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.cwh.mvvm_coroutines.BR
 import com.cwh.mvvm_coroutines.R
 import com.cwh.mvvm_coroutines.databinding.HomeViewDataBinding
-import com.cwh.mvvm_coroutines.down.DownloadStoriesService
+import com.cwh.mvvm_coroutines.service.DownloadStoriesService
 import com.cwh.mvvm_coroutines.model.BeforeNews
 import com.cwh.mvvm_coroutines.model.LatestNews
 import com.cwh.mvvm_coroutines.model.Story
 import com.cwh.mvvm_coroutines.model.TopStory
+import com.cwh.mvvm_coroutines.service.CleanCacheIntentService
 import com.cwh.mvvm_coroutines.ui.details.StoryDetailsActivity
 import com.cwh.mvvm_coroutines.ui.details.StoryDetailsActivityForFragment
 import com.cwh.mvvm_coroutines.ui.like.LikeStoryActivity
@@ -40,6 +41,7 @@ import com.cwh.mvvm_coroutines_base.utils.ToastUtils
 import kotlinx.android.synthetic.main.activity_news_list.*
 import kotlinx.android.synthetic.main.fragment_layout.mRecyclerView
 import kotlinx.android.synthetic.main.news_list_toolbar.view.*
+import java.lang.Math.abs
 
 class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() {
 
@@ -58,6 +60,8 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
 
     private val twoHour=2*60*60*1000
 
+    private val aMonth=2592000000
+
     private lateinit var mImageDownLoad:ImageView
 
     private lateinit var mTvProgress:TextView
@@ -67,6 +71,7 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
     override fun initDataAndView() {
         initToolBar()
         registerReceiver()
+        cleanCache()
         val topStory = mutableListOf<TopStory>()
         initHeadView(topStory)
         mRefresh.isRefreshing = true
@@ -74,6 +79,12 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
 //        mRefresh.setOnRefreshListener {
 //            mViewModel.latestNewsList()
 //        }
+    }
+
+    private fun cleanCache() {
+        if(kotlin.math.abs(System.currentTimeMillis() - SPUtils.getLastCleanTime()) >=aMonth){
+            CleanCacheIntentService.startCleanService(this)
+        }
     }
 
     override fun initViewObserver() {
@@ -94,10 +105,14 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
                 Status.LOADING->{}
                 Status.SUCCESS->{
                     val beforeNews=it.data
-                    beforeNews?.let {
-                        mAdapter!!.addData(formatData(it))
-                        mAdapter!!.loadMoreSuccess()
-                    }?:mAdapter!!.loadNoMoreData()
+                    beforeNews?.stories?.let {
+                        if(it.isNotEmpty()){
+                            mAdapter!!.addData(formatData(beforeNews!!))
+                            mAdapter!!.loadMoreSuccess()
+                        }else{
+                            mAdapter!!.loadFail()
+                        }
+                    }?:mAdapter!!.loadFail()
 
                 }
 
@@ -113,12 +128,14 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
     private fun formatData(beforeNews: BeforeNews):MutableList<Story>{
         val date=beforeNews.date
         val result= mutableListOf<Story>()
-        val story=Story()
-        story.isTime=true
-        story.date=date
-        result.add(story)
         beforeNews.stories?.let {
-            result.addAll(it)
+            if(it.isNotEmpty()){
+                val story=Story()
+                story.isTime=true
+                story.date=date
+                result.add(story)
+                result.addAll(it)
+            }
         }
         return result
     }

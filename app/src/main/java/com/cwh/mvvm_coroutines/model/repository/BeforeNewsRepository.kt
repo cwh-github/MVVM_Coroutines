@@ -8,6 +8,7 @@ import com.cwh.mvvm_coroutines_base.base.net.RetrofitUtils
 import com.cwh.mvvm_coroutines_base.base.repository.BaseLocalRepository
 import com.cwh.mvvm_coroutines_base.base.repository.BaseRemoteRepository
 import com.cwh.mvvm_coroutines_base.base.repository.BaseRepository
+import com.cwh.mvvm_coroutines_base.utils.LogUtils
 
 /**
  * Description:
@@ -62,20 +63,25 @@ class BeforeNewsRepository :IBeforeNewsRepository,
     override suspend fun beforeNews(date: Long): BeforeNews {
         val localResult=local.beforeNews(date)
         return if(localResult.stories.isNullOrEmpty() || localResult.stories!!.size<=5){
-            val remoteResult=remote.beforeNews(date)
-             if(localResult.stories!=null && remoteResult.stories!=null){
-                 for(localStory in localResult.stories!!){
-                     for(remoteStory in remoteResult.stories!!){
-                        if(localStory.id == remoteStory.id){
-                            remoteStory.isRead=localStory.isRead
-                            remoteStory.isLike=localStory.isLike
-                            continue
+            try {
+                val remoteResult = remote.beforeNews(date)
+                if (localResult.stories != null && remoteResult.stories != null) {
+                    for (localStory in localResult.stories!!) {
+                        for (remoteStory in remoteResult.stories!!) {
+                            if (localStory.id == remoteStory.id) {
+                                remoteStory.isRead = localStory.isRead
+                                remoteStory.isLike = localStory.isLike
+                                continue
+                            }
                         }
-                     }
-                 }
-             }
-            helper.insertBeforeStory(remoteResult.stories)
-            remoteResult
+                    }
+                }
+                helper.insertBeforeStory(remoteResult.stories)
+                remoteResult
+            }catch (e:Exception){
+                LogUtils.e("Error","Load Before News Error is :${e.message}")
+                localResult
+            }
         }else{
             localResult
         }

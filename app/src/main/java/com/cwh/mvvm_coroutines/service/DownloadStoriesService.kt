@@ -1,4 +1,4 @@
-package com.cwh.mvvm_coroutines.down
+package com.cwh.mvvm_coroutines.service
 
 import android.app.IntentService
 import android.content.Intent
@@ -24,19 +24,12 @@ import java.io.File
 import java.lang.Exception
 import kotlin.coroutines.CoroutineContext
 
-// TODO: Rename actions, choose action names that describe tasks that this
-// IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
-private const val ACTION_FOO = "com.cwh.mvvm_coroutines.down.action.FOO"
-private const val ACTION_BAZ = "com.cwh.mvvm_coroutines.down.action.BAZ"
 
-// TODO: Rename parameters
-private const val EXTRA_PARAM1 = "com.cwh.mvvm_coroutines.down.extra.PARAM1"
-private const val EXTRA_PARAM2 = "com.cwh.mvvm_coroutines.down.extra.PARAM2"
 
 /**
  * An [IntentService] subclass for handling asynchronous task requests in
  * a service on a separate handler thread.
- * TODO: Customize class - update intent actions, extra parameters and static
+ *
  * helper methods.
  */
 class DownloadStoriesService : IntentService("DownloadStoriesService"),CoroutineScope {
@@ -226,14 +219,14 @@ class DownloadStoriesService : IntentService("DownloadStoriesService"),Coroutine
             }
             val content=details.content
             val doc=Jsoup.parse(content)
-            val images=doc.select("img.content-image")
+            val images=doc.getElementsByTag("img")
             for(element in images){
                 try {
                     val url=element.attr("src")
                     val file = GlideUtils.downFile(this@DownloadStoriesService, url)
                     val targetFile = createTargetFile(MD5Utils.md5(url))
                     FileUtils.copyFile(file, targetFile)
-                    element.attr("src",targetFile.absolutePath)
+                    element.attr("src","file://${targetFile.absolutePath}")
                 }catch (e:Exception){
                     LogUtils.e("Error", "下载Details图片失败：${element.attr("src")} +\n+" +
                             "${e.message}")
@@ -246,6 +239,8 @@ class DownloadStoriesService : IntentService("DownloadStoriesService"),Coroutine
                     LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
                 }
             }
+            details.content=doc.html()
+
         }
 
         val intent=Intent().setAction(DOWN_LOAD_COMPLETE)

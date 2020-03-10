@@ -38,6 +38,9 @@ interface StoryDao {
     @Query("Delete From story where date<:date")
     suspend fun deleteStory(date:Long)
 
+    @Query("Select * From story Where date<:date")
+    suspend fun queryByLessDate(date: Long):List<Story>?
+
     @Query("Select * From story where isLike=1 order by date desc")
     suspend fun queryLikeStory():List<Story>?
 }
