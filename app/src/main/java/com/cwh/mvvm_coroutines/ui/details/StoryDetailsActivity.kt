@@ -1,14 +1,11 @@
 package com.cwh.mvvm_coroutines.ui.details
 
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.View
-import android.webkit.*
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
-import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.Observer
 import com.cwh.mvvm_coroutines.BR
 import com.cwh.mvvm_coroutines.R
@@ -23,7 +20,6 @@ import com.cwh.mvvm_coroutines_base.base.Status
 import com.cwh.mvvm_coroutines_base.base.click
 import com.cwh.mvvm_coroutines_base.base.observerEvent
 import com.cwh.mvvm_coroutines_base.base.view.BaseActivity
-import com.cwh.mvvm_coroutines_base.base.viewmodel.NoViewModel
 import com.cwh.mvvm_coroutines_base.utils.DisplayUtils
 import com.cwh.mvvm_coroutines_base.utils.LogUtils
 import com.cwh.mvvm_coroutines_base.utils.ToastUtils
@@ -191,13 +187,14 @@ class StoryDetailsActivity : BaseActivity<StoryDetailsViewModel,StoryDetailsBind
         if(details.questionTitle.isNullOrEmpty()){
             mTvAnswerTitle.isVisible=false
         }else {
+            mTvAnswerTitle.isVisible=true
             mTvAnswerTitle.text = details.questionTitle ?: ""
         }
 
         GlideUtils.loadRoundImage(this,details.authorImage?:"",
             radius = DisplayUtils.dip2px(this,2f),mImg = mImgAuthor)
 
-        mTvAuthor.text=details.author
+        mTvAuthor.text="作者/${details.author.replace("，","")}"
 
         WebViewUtils.webViewSetting(mWebView)
         mRefresh.setOnRefreshListener {

@@ -24,7 +24,7 @@ import kotlin.coroutines.CoroutineContext
  *
  * helper methods.
  */
-class CleanCacheIntentService : IntentService("CleanCacheIntentService"),CoroutineScope {
+class CleanCacheService : IntentService("CleanCacheIntentService"),CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = SupervisorJob()
 
@@ -115,7 +115,7 @@ class CleanCacheIntentService : IntentService("CleanCacheIntentService"),Corouti
 
         @JvmStatic
         fun startCleanService(context: Context) {
-            val intent = Intent(context, CleanCacheIntentService::class.java)
+            val intent = Intent(context, CleanCacheService::class.java)
             context.startService(intent)
         }
 

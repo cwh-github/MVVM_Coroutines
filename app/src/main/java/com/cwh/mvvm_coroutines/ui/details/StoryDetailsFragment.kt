@@ -149,13 +149,14 @@ class StoryDetailsFragment private constructor() :
         if(details.questionTitle.isNullOrEmpty()){
             mTvAnswerTitle.isVisible=false
         }else {
+            mTvAnswerTitle.isVisible=true
             mTvAnswerTitle.text = details.questionTitle ?: ""
         }
 
         GlideUtils.loadRoundImage(mActivity,details.authorImage?:"",
             radius = DisplayUtils.dip2px(mActivity,2f),mImg = mImgAuthor)
 
-        mTvAuthor.text=details.author
+        mTvAuthor.text="作者/${details.author.replace("，","")}"
 
         WebViewUtils.webViewSetting(mWebView)
         mRefresh.setOnRefreshListener {

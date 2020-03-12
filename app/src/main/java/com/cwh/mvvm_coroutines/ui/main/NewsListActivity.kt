@@ -22,7 +22,7 @@ import com.cwh.mvvm_coroutines.model.BeforeNews
 import com.cwh.mvvm_coroutines.model.LatestNews
 import com.cwh.mvvm_coroutines.model.Story
 import com.cwh.mvvm_coroutines.model.TopStory
-import com.cwh.mvvm_coroutines.service.CleanCacheIntentService
+import com.cwh.mvvm_coroutines.service.CleanCacheService
 import com.cwh.mvvm_coroutines.ui.details.StoryDetailsActivity
 import com.cwh.mvvm_coroutines.ui.details.StoryDetailsActivityForFragment
 import com.cwh.mvvm_coroutines.ui.like.LikeStoryActivity
@@ -41,7 +41,6 @@ import com.cwh.mvvm_coroutines_base.utils.ToastUtils
 import kotlinx.android.synthetic.main.activity_news_list.*
 import kotlinx.android.synthetic.main.fragment_layout.mRecyclerView
 import kotlinx.android.synthetic.main.news_list_toolbar.view.*
-import java.lang.Math.abs
 
 class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() {
 
@@ -83,7 +82,7 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
 
     private fun cleanCache() {
         if(kotlin.math.abs(System.currentTimeMillis() - SPUtils.getLastCleanTime()) >=aMonth){
-            CleanCacheIntentService.startCleanService(this)
+            CleanCacheService.startCleanService(this)
         }
     }
 

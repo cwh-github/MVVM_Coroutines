@@ -13,8 +13,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <service
-            android:name=".service.CleanCacheIntentService"
-            android:exported="false"></service>
+            android:name=".service.CleanCacheService"
+            android:exported="false"/>
 
         <activity
             android:name=".ui.details.StoryDetailsActivityForFragment"
