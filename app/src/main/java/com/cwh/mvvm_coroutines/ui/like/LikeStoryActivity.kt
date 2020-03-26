@@ -75,7 +75,6 @@ class LikeStoryActivity : BaseActivity<LikeStoryViewModel, LikeBinding>() {
         }
     }
 
-
     inner class NewsListAdapter(mContext: Context, mData: MutableList<Story>) :
         BaseRecyclerViewAdapter<Story>(mContext, mData) {
 

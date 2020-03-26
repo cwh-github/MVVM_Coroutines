@@ -3,7 +3,6 @@ package com.cwh.mvvm_coroutines.ui.details
 import android.content.Intent
 import android.graphics.Color
 import android.view.View
-import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
@@ -41,6 +40,12 @@ class StoryDetailsActivityForFragment : BaseActivity<StoryDetailsViewModel,
 
     private var mViewPagerAdapter:StoryViewPagerAdapter?=null
 
+    companion object{
+        public val READ_LIST_CODE=1000
+    }
+
+
+    val mReadList= arrayListOf<Long>()
 
     override fun initDataAndView() {
         //设置状态栏透明
@@ -117,6 +122,9 @@ class StoryDetailsActivityForFragment : BaseActivity<StoryDetailsViewModel,
 
     private fun initClickListener() {
         mImgBack.click {
+            val intent=Intent()
+            intent.putExtra("readList",mReadList)
+            setResult(READ_LIST_CODE,intent)
             finish()
         }
 
@@ -180,6 +188,14 @@ class StoryDetailsActivityForFragment : BaseActivity<StoryDetailsViewModel,
 
         })
     }
+
+    override fun onBackPressed() {
+        val intent=Intent()
+        intent.putExtra("readList",mReadList)
+        setResult(READ_LIST_CODE,intent)
+        super.onBackPressed()
+    }
+
 
     inner class StoryViewPagerAdapter(fragmentActivity: FragmentActivity) :
         FragmentStateAdapter(fragmentActivity) {

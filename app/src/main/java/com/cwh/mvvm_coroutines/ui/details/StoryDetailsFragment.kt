@@ -3,6 +3,7 @@ package com.cwh.mvvm_coroutines.ui.details
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.util.SparseLongArray
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
@@ -13,6 +14,7 @@ import com.cwh.mvvm_coroutines.databinding.StoryDetailsFragmentBinding
 import com.cwh.mvvm_coroutines.extension.parseHex
 import com.cwh.mvvm_coroutines.model.NewsDetails
 import com.cwh.mvvm_coroutines.model.Story
+import com.cwh.mvvm_coroutines.ui.like.LikeStoryActivity
 import com.cwh.mvvm_coroutines.utils.GlideUtils
 import com.cwh.mvvm_coroutines.utils.WebViewUtils
 import com.cwh.mvvm_coroutines_base.base.Status
@@ -41,6 +43,8 @@ class StoryDetailsFragment private constructor() :
     private var mStoryId: Long? = null
 
     private var isTran: Boolean = true
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,6 +93,7 @@ class StoryDetailsFragment private constructor() :
         //而由于ViewPager2自带的懒加载，只有正在显示的才在onResume状态
         mStory?.let {
             mViewModel.setStoryIsRead(it)
+            (mActivity as StoryDetailsActivityForFragment).mReadList.add(it.id)
         }
         if(isTran){
             //设置状态栏透明

@@ -55,17 +55,19 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
 
     private var mAdapter: NewsListAdapter? = null
 
-    private val mData= mutableListOf<Story>()
+    private val mData = mutableListOf<Story>()
 
-    private val twoHour=2*60*60*1000
+    private val twoHour = 2 * 60 * 60 * 1000
 
-    private val aMonth=2592000000
+    private val aMonth = 2592000000
 
-    private lateinit var mImageDownLoad:ImageView
+    private lateinit var mImageDownLoad: ImageView
 
-    private lateinit var mTvProgress:TextView
+    private lateinit var mTvProgress: TextView
 
-    private var mReceiver: MyBroadCastReceiver?=null
+    private var mReceiver: MyBroadCastReceiver? = null
+
+    private val READ_RESULT_CODE = 10001
 
     override fun initDataAndView() {
         initToolBar()
@@ -81,7 +83,7 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
     }
 
     private fun cleanCache() {
-        if(kotlin.math.abs(System.currentTimeMillis() - SPUtils.getLastCleanTime()) >=aMonth){
+        if (kotlin.math.abs(System.currentTimeMillis() - SPUtils.getLastCleanTime()) >= aMonth) {
             CleanCacheService.startCleanService(this)
         }
     }
@@ -93,29 +95,30 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
                 Status.ERROR -> mRefresh.isRefreshing = false
                 Status.SUCCESS -> {
                     initRecyclerView(it.data!!)
-                    mRefresh.isRefreshing=false
+                    mRefresh.isRefreshing = false
                     SPUtils.saveRefreshTime()
                 }
             }
         })
 
         mViewModel.beforeNews.observe(this, Observer {
-            when(it.status){
-                Status.LOADING->{}
-                Status.SUCCESS->{
-                    val beforeNews=it.data
+            when (it.status) {
+                Status.LOADING -> {
+                }
+                Status.SUCCESS -> {
+                    val beforeNews = it.data
                     beforeNews?.stories?.let {
-                        if(it.isNotEmpty()){
+                        if (it.isNotEmpty()) {
                             mAdapter!!.addData(formatData(beforeNews!!))
                             mAdapter!!.loadMoreSuccess()
-                        }else{
+                        } else {
                             mAdapter!!.loadFail()
                         }
-                    }?:mAdapter!!.loadFail()
+                    } ?: mAdapter!!.loadFail()
 
                 }
 
-                Status.ERROR->{
+                Status.ERROR -> {
                     mAdapter!!.loadFail()
                 }
 
@@ -124,14 +127,14 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
 
     }
 
-    private fun formatData(beforeNews: BeforeNews):MutableList<Story>{
-        val date=beforeNews.date
-        val result= mutableListOf<Story>()
+    private fun formatData(beforeNews: BeforeNews): MutableList<Story> {
+        val date = beforeNews.date
+        val result = mutableListOf<Story>()
         beforeNews.stories?.let {
-            if(it.isNotEmpty()){
-                val story=Story()
-                story.isTime=true
-                story.date=date
+            if (it.isNotEmpty()) {
+                val story = Story()
+                story.isTime = true
+                story.date = date
                 result.add(story)
                 result.addAll(it)
             }
@@ -140,12 +143,12 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
     }
 
     private fun initToolBar() {
-        mTvProgress=mToolBar.find(R.id.mTvProgress)
-        mImageDownLoad=mToolBar.find(R.id.mImageDownload)
+        mTvProgress = mToolBar.find(R.id.mTvProgress)
+        mImageDownLoad = mToolBar.find(R.id.mImageDownload)
         mImageDownLoad.click {
             DownloadStoriesService.startService(this)
-            mImageDownLoad.isVisible=false
-            mTvProgress.isVisible=true
+            mImageDownLoad.isVisible = false
+            mTvProgress.isVisible = true
         }
         val month = when (TimeCovertUtils.covertMonth()) {
             1 -> "一月"
@@ -166,9 +169,9 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
         mToolBar.mTvDay.text = "${TimeCovertUtils.covertDay()}"
 
         mToolBar.click {
-            val layoutManager=mRecyclerView.layoutManager as LinearLayoutManager?
-            val position=layoutManager?.findFirstVisibleItemPosition()?:0
-            if(position>20){
+            val layoutManager = mRecyclerView.layoutManager as LinearLayoutManager?
+            val position = layoutManager?.findFirstVisibleItemPosition() ?: 0
+            if (position > 20) {
                 mRecyclerView.scrollToPosition(20)
             }
             mRecyclerView.smoothScrollToPosition(0)
@@ -203,17 +206,21 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
         }
 
         mToolBar.mTvTitle.click {
-            startActivity(Intent(this,LikeStoryActivity::class.java))
+            startActivity(Intent(this, LikeStoryActivity::class.java))
         }
     }
 
     private fun initHeadView(data: MutableList<TopStory>) {
         mHeadView = NewsHeadView(this, data)
-        mHeadView.onItemClick={
-            val story=Story(it.ga_prefix,it.hint!!,it.id.toLong(),it.image_hue!!, arrayListOf(it.image),
-                it.title,it.type,it.url,false,false,it.id.toLong(),false,0)
-            startActivity(Intent(this,StoryDetailsActivity::class.java)
-                .putExtra("story",story))
+        mHeadView.onItemClick = {
+            val story = Story(
+                it.ga_prefix, it.hint!!, it.id.toLong(), it.image_hue!!, arrayListOf(it.image),
+                it.title, it.type, it.url, false, false, it.id.toLong(), false, 0
+            )
+            startActivity(
+                Intent(this, StoryDetailsActivity::class.java)
+                    .putExtra("story", story)
+            )
         }
     }
 
@@ -233,10 +240,10 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
         mHeadView.stopLoop()
     }
 
-    private fun autoRefresh(){
-        if(kotlin.math.abs(System.currentTimeMillis() - SPUtils.getLastTime()) >=twoHour){
+    private fun autoRefresh() {
+        if (kotlin.math.abs(System.currentTimeMillis() - SPUtils.getLastTime()) >= twoHour) {
             mRecyclerView.scrollToPosition(0)
-            mRefresh.isRefreshing=true
+            mRefresh.isRefreshing = true
             mViewModel.latestNewsList()
         }
     }
@@ -253,14 +260,14 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
             data.stories?.let {
                 mData.addAll(it)
             }
-            mAdapter = NewsListAdapter(this,mData)
+            mAdapter = NewsListAdapter(this, mData)
             mAdapter!!.mEmptyViewWithHeaderView = true
             mAdapter!!.addHeaderView(mHeadView.mRootView)
             mAdapter!!.setLoadMoreView(SimpleLoadMoreView(this))
             //加载更多
-            mAdapter!!.onLoadMoreListener={
-                if(mAdapter!!.mData.isNotEmpty()){
-                    val date=mAdapter!!.mData[mAdapter!!.mData.size-1].date
+            mAdapter!!.onLoadMoreListener = {
+                if (mAdapter!!.mData.isNotEmpty()) {
+                    val date = mAdapter!!.mData[mAdapter!!.mData.size - 1].date
                     mViewModel.beforeNewsList(date)
                 }
             }
@@ -284,7 +291,7 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
 //            })
         } else {
             data.stories?.let {
-                val data= mutableListOf<Story>()
+                val data = mutableListOf<Story>()
                 data.addAll(it)
                 mAdapter!!.setNewDate(data)
             }
@@ -292,9 +299,28 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
     }
 
 
-
     override fun onBackPressed() {
         moveTaskToBack(true)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == READ_RESULT_CODE && resultCode == StoryDetailsActivityForFragment.READ_LIST_CODE) {
+            val readList: ArrayList<Long>? =
+                data?.getSerializableExtra("readList") as? ArrayList<Long>
+            readList?.let {
+                if (it.isNotEmpty()) {
+                    it.forEach { id ->
+                        mAdapter?.mData?.forEach {
+                            if (id == it.id) {
+                                it.isRead = true
+                            }
+                        }
+                    }
+                    mAdapter?.notifyDataSetChanged()
+                }
+            }
+        }
     }
 
 
@@ -306,23 +332,23 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
 
         override fun onViewAttachedToWindow(holder: RecyclerView.ViewHolder) {
             super.onViewAttachedToWindow(holder)
-            if(holder.itemViewType== HEADER_VIEW){
+            if (holder.itemViewType == HEADER_VIEW) {
                 mHeadView.startLoop()
             }
         }
 
         override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
             super.onViewDetachedFromWindow(holder)
-            if(holder.itemViewType== HEADER_VIEW){
+            if (holder.itemViewType == HEADER_VIEW) {
                 mHeadView.stopLoop()
             }
         }
 
         override fun getContentViewItemViewType(position: Int): Int {
-            val story=mData[position]
-            return if(story.isTime){
+            val story = mData[position]
+            return if (story.isTime) {
                 TIME_CONTENT_TYPE
-            }else{
+            } else {
                 ITEM_CONTENT_TYPE
             }
         }
@@ -361,48 +387,52 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
         }
 
         override fun onBindContentViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            val story=mData[position]
-            when{
-                holder.itemViewType==TIME_CONTENT_TYPE->{
+            val story = mData[position]
+            when {
+                holder.itemViewType == TIME_CONTENT_TYPE -> {
 
-                    val mViewHolder=holder as NewsTimeViewHolder
-                    mViewHolder.mTvTime.text=TimeParseUtils.mothAndDay(story.date)
+                    val mViewHolder = holder as NewsTimeViewHolder
+                    mViewHolder.mTvTime.text = TimeParseUtils.mothAndDay(story.date)
 
                 }
 
-                holder.itemViewType==ITEM_CONTENT_TYPE->{
-                    val mViewHolder=holder as NewsContentViewHolder
-                    if(story.isRead){
-                        mViewHolder.mTvTitle.alpha=0.5f
-                        mViewHolder.mTvAuthor.alpha=0.5f
-                    }else{
-                        mViewHolder.mTvTitle.alpha=1.0f
-                        mViewHolder.mTvAuthor.alpha=1.0f
+                holder.itemViewType == ITEM_CONTENT_TYPE -> {
+                    val mViewHolder = holder as NewsContentViewHolder
+                    if (story.isRead) {
+                        mViewHolder.mTvTitle.alpha = 0.5f
+                        mViewHolder.mTvAuthor.alpha = 0.5f
+                    } else {
+                        mViewHolder.mTvTitle.alpha = 1.0f
+                        mViewHolder.mTvAuthor.alpha = 1.0f
                     }
-                    mViewHolder.mTvTitle.text=story.title
-                    mViewHolder.mTvAuthor.text=story.hint
-                    GlideUtils.loadRoundImage(mContext,story.images?.get(0)?:"",
-                        mImg = mViewHolder.mImg)
+                    mViewHolder.mTvTitle.text = story.title
+                    mViewHolder.mTvAuthor.text = story.hint
+                    GlideUtils.loadRoundImage(
+                        mContext, story.images?.get(0) ?: "",
+                        mImg = mViewHolder.mImg
+                    )
 
                     holder.itemView.click {
-//                        startActivity(Intent(mContext,StoryDetailsActivity::class.java)
+                        //                        startActivity(Intent(mContext,StoryDetailsActivity::class.java)
 //                            .putExtra("story",story))
-                        val list=ArrayList<Story>()
-                        var index=0
+                        val list = ArrayList<Story>()
+                        var index = 0
                         mData.forEach {
-                            if(!it.isTime){
+                            if (!it.isTime) {
                                 list.add(it)
-                                if(it.id==story.id){
-                                    index=list.size-1
+                                if (it.id == story.id) {
+                                    index = list.size - 1
                                 }
                             }
                         }
-                        startActivity(Intent(mContext,StoryDetailsActivityForFragment::class.java)
-                            .putExtra("mStoryList",list)
-                            .putExtra("index",index)
+                        startActivityForResult(
+                            Intent(mContext, StoryDetailsActivityForFragment::class.java)
+                                .putExtra("mStoryList", list)
+                                .putExtra("index", index)
+                            , READ_RESULT_CODE
                         )
-                        if(!story.isRead){
-                            story.isRead=true
+                        if (!story.isRead) {
+                            story.isRead = true
                             notifyDataSetChanged()
                             mViewModel.setStoryIsRead(story)
                         }
@@ -415,14 +445,14 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
 
     }
 
-    inner class NewsContentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
-        val mImg=itemView.find<ImageView>(R.id.mImg)
-        val mTvTitle=itemView.find<TextView>(R.id.mTvTitle)
-        val mTvAuthor=itemView.find<TextView>(R.id.mTvAuthor)
+    inner class NewsContentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val mImg = itemView.find<ImageView>(R.id.mImg)
+        val mTvTitle = itemView.find<TextView>(R.id.mTvTitle)
+        val mTvAuthor = itemView.find<TextView>(R.id.mTvAuthor)
     }
 
-    inner class NewsTimeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
-        val mTvTime=itemView.find<TextView>(R.id.mTvTime)
+    inner class NewsTimeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val mTvTime = itemView.find<TextView>(R.id.mTvTime)
     }
 
     private fun registerReceiver() {
@@ -447,18 +477,18 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent!!.action) {
                 DownloadStoriesService.DOWN_LOAD_START -> {
-                    mTvProgress.isVisible=true
-                    mImageDownLoad.isVisible=false
+                    mTvProgress.isVisible = true
+                    mImageDownLoad.isVisible = false
                 }
                 DownloadStoriesService.DOWN_LOAD_PROGRESS -> {
-                    val progress=intent!!.getIntExtra(DownloadStoriesService.PROGRESS,0)
-                    mTvProgress.text="$progress %"
+                    val progress = intent!!.getIntExtra(DownloadStoriesService.PROGRESS, 0)
+                    mTvProgress.text = "$progress %"
                 }
                 DownloadStoriesService.DOWN_LOAD_COMPLETE -> {
-                    mImageDownLoad.isVisible=true
-                    mTvProgress.text="0 %"
-                    mTvProgress.isVisible=false
-                    ToastUtils.showToast(this@NewsListActivity,"下载完成(•‾̑⌣‾̑•)✧˖°")
+                    mImageDownLoad.isVisible = true
+                    mTvProgress.text = "0 %"
+                    mTvProgress.isVisible = false
+                    ToastUtils.showToast(this@NewsListActivity, "下载完成(•‾̑⌣‾̑•)✧˖°")
                 }
             }
         }
