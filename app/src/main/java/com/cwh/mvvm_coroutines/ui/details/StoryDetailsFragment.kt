@@ -47,7 +47,6 @@ class StoryDetailsFragment private constructor() :
         mStory = arguments?.getSerializable("story") as? Story
         mStory?.let {
             mStoryId=it.id
-            mViewModel.setStoryIsRead(it)
         }
     }
 
@@ -85,6 +84,12 @@ class StoryDetailsFragment private constructor() :
 
     override fun onResume() {
         super.onResume()
+        //不能再onCreate 设置已读，由于ViewPager2的预加载，没有显示的
+        //Fragment也会走onCreate,从而导致没看的也变为了已读
+        //而由于ViewPager2自带的懒加载，只有正在显示的才在onResume状态
+        mStory?.let {
+            mViewModel.setStoryIsRead(it)
+        }
         if(isTran){
             //设置状态栏透明
             val decorView = mActivity.window.decorView

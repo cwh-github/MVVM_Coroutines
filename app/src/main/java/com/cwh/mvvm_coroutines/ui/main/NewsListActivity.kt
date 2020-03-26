@@ -438,7 +438,8 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
     override fun onDestroy() {
         super.onDestroy()
         mReceiver?.let {
-            unregisterReceiver(it)
+            val localBroadcastManager = LocalBroadcastManager.getInstance(this)
+            localBroadcastManager.unregisterReceiver(it)
         }
     }
 
