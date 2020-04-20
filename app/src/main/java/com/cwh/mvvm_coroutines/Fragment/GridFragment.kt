@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cwh.mvvm_coroutines.R
 import com.cwh.mvvm_coroutines_base.base.adapter.BaseRecyclerViewAdapter
@@ -61,9 +60,9 @@ class GridFragment:Fragment() {
                 }
                 if (mAdapter == null) {
                     initRecyclerView()
-                    mAdapter!!.setNewDate(data)
+                    mAdapter!!.setNewData(data)
                 } else {
-                    mAdapter!!.setNewDate(data)
+                    mAdapter!!.setNewData(data)
                 }
                 mRefresh.isRefreshing = false
                 mAdapter?.enableLoadMore(true)
@@ -169,7 +168,7 @@ class GridFragment:Fragment() {
 
         mBtnEmptyView.click {
             val datas = mutableListOf<String>()
-            mAdapter!!.setNewDate(datas, true)
+            mAdapter!!.setNewData(datas, true)
             mAdapter!!.mEmptyViewWithFooterView = true
             mAdapter!!.mEmptyViewWithHeaderView = true
         }

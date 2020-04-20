@@ -293,7 +293,7 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
             data.stories?.let {
                 val data = mutableListOf<Story>()
                 data.addAll(it)
-                mAdapter!!.setNewDate(data)
+                mAdapter!!.setNewData(data)
             }
         }
     }

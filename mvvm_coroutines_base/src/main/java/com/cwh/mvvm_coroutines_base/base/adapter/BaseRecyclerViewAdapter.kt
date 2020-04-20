@@ -726,7 +726,7 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: Muta
      *
      * @param isRefreshForEmptyData 当刷新后的数据为空时，是否显示到RecyclerView上
      */
-    fun setNewDate(data: MutableList<T>, isRefreshForEmptyData: Boolean = false) {
+    fun setNewData(data: MutableList<T>, isRefreshForEmptyData: Boolean = false) {
         enableLoadMore(true)
         mIsLoading = false
         if (::mLoadMoreView.isInitialized) {

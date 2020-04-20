@@ -157,9 +157,9 @@ class LinearFragment : Fragment() {
                 }
                 if (mAdapter == null) {
                     initRecyclerView()
-                    mAdapter!!.setNewDate(data)
+                    mAdapter!!.setNewData(data)
                 } else {
-                    mAdapter!!.setNewDate(data)
+                    mAdapter!!.setNewData(data)
                 }
                 mRefresh.isRefreshing = false
                 mAdapter?.enableLoadMore(true)
@@ -322,7 +322,7 @@ class LinearFragment : Fragment() {
 
         mBtnEmptyView.click {
             val datas = mutableListOf<String>()
-            mAdapter!!.setNewDate(datas, true)
+            mAdapter!!.setNewData(datas, true)
             mAdapter!!.mEmptyViewWithFooterView = true
             mAdapter!!.mEmptyViewWithHeaderView = true
         }

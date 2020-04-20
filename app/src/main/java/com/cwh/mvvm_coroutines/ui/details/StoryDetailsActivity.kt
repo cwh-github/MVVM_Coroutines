@@ -207,4 +207,5 @@ class StoryDetailsActivity : BaseActivity<StoryDetailsViewModel,StoryDetailsBind
         }
         mWebView.loadDataWithBaseURL("",details.content, "text/html", "utf-8", null)
     }
+
 }

@@ -22,18 +22,28 @@ fun <T : View> View.find(@IdRes id: Int): T =
  *
  *
  * */
-var lastClickTime: Long = 0
+var lastClickTime: Long=0
+    private set
 
 /**
- * View添加防重复点击的clickListener 事件
+ * 上次点击的 view 对象对应的 hashcode (不要对该值进行赋值操作)
+ */
+var lastClickViewHashCode:Int=0
+    private set
+
+
+/**
+ * View添加防重复点击的clickListener 事件,在指定点击事件间隔内，
+ * 重复点击同一个view,点击事件不生效
  * @param time 指定时间间隔内为重复点击，默认500毫秒
  *
  */
 fun View.click(time: Long = 500,listener: (View) -> Unit) {
     this.setOnClickListener {
-        if (abs(System.currentTimeMillis() - lastClickTime) > time) {
+        if (abs(System.currentTimeMillis() - lastClickTime) > time || lastClickViewHashCode!=this.hashCode()) {
             listener(this)
             lastClickTime = System.currentTimeMillis()
+            lastClickViewHashCode=this.hashCode()
         }
     }
 }

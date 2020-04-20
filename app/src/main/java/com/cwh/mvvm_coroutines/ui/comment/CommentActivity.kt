@@ -74,7 +74,7 @@ class CommentActivity : BaseActivity<CommentViewModel,CommentBinding>() {
             mAdapter=CommentsAdapter(this,formatData(data))
             mRecyclerView.adapter=mAdapter
         }else{
-            mAdapter!!.setNewDate(formatData(data))
+            mAdapter!!.setNewData(formatData(data))
         }
     }
 
