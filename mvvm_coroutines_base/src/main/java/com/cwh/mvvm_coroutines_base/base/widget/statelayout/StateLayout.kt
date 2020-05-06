@@ -8,6 +8,7 @@ import android.view.animation.AnimationUtils
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.ColorInt
 import androidx.annotation.LayoutRes
 import com.cwh.mvvm_coroutines_base.R
 import com.cwh.mvvm_coroutines_base.base.click
@@ -56,7 +57,10 @@ class StateLayout @JvmOverloads constructor(
             .apply {
                 try {
                     state =
-                        State.values()[getInteger(R.styleable.StateLayout_sl_state, State.NONE.ordinal)]
+                        State.values()[getInteger(
+                            R.styleable.StateLayout_sl_state,
+                            State.NONE.ordinal
+                        )]
                     loadingLayoutRes = getResourceId(
                         R.styleable.StateLayout_sl_loadingLayout,
                         R.layout.layout_state_loading
@@ -99,7 +103,7 @@ class StateLayout @JvmOverloads constructor(
     /**
      * 获取当前加载状态
      */
-    fun getState():State{
+    fun getState(): State {
         return state
     }
 
@@ -211,13 +215,20 @@ class StateLayout @JvmOverloads constructor(
 
     /**
      * 展示loading状态
+     * @param color 提示文字的颜色
      */
-    fun showLoading(): StateLayout {
+    fun showLoading(@ColorInt color: Int? = null): StateLayout {
         state = State.LOADING
         updateLoadingVisibility(View.VISIBLE)
         contentLayout.gone()
         errorLayout.gone()
         updateEmptyContentVisibility(View.INVISIBLE)
+        color?.let {
+            loadingLayout?.findView<TextView>(R.id.textView_state_layout_loading_message) {
+                this.setTextColor(color)
+            }
+        }
+
         return this
     }
 
@@ -263,12 +274,17 @@ class StateLayout @JvmOverloads constructor(
     }
 
 
-    fun showErrorView(): StateLayout {
+    fun showErrorView(@ColorInt color: Int? = null): StateLayout {
         state = State.INFO
         updateLoadingVisibility(View.INVISIBLE)
         contentLayout.gone()
         errorLayout.visible()
         updateEmptyContentVisibility(View.INVISIBLE)
+        color?.let {
+            errorLayout?.findView<TextView>(R.id.textView_state_layout_info_message) {
+                this.setTextColor(color)
+            }
+        }
         return this
     }
 
@@ -294,12 +310,17 @@ class StateLayout @JvmOverloads constructor(
         return showEmpty()
     }
 
-    fun showEmpty(): StateLayout {
+    fun showEmpty(@ColorInt color: Int? = null): StateLayout {
         state = State.EMPTY_CONTENT
         updateLoadingVisibility(View.INVISIBLE)
         contentLayout.gone()
         errorLayout.gone()
         updateEmptyContentVisibility(View.VISIBLE)
+        color?.let {
+            emptyLayout?.findView<TextView>(R.id.textView_state_layout_empty_message) {
+                this.setTextColor(color)
+            }
+        }
         return this
     }
 

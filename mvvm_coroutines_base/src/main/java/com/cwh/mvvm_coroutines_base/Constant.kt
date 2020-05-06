@@ -10,7 +10,7 @@ package com.cwh.mvvm_coroutines_base
  * 是否打印log
  */
 
-const val isShowLog = true
+const val isShowLog = false
 
 /**
  * 是否为Debug
