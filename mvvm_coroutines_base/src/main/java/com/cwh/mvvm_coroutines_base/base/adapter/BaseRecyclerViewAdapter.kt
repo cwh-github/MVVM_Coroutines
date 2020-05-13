@@ -17,7 +17,7 @@ import com.cwh.mvvm_coroutines_base.utils.LogUtils
  * Date：2020/1/8 0008-11:40
  * Author: cwh
  */
-abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: MutableList<T>) :
+abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val data: MutableList<T>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -25,6 +25,13 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val mData: Muta
         const val LOAD_MORE_VIEW = 0x10000222
         const val FOOTER_VIEW = 0x10000333
         const val EMPTY_VIEW = 0x10000555
+    }
+
+    private val mData= mutableListOf<T>()
+
+    init {
+        mData.clear()
+        mData.addAll(data)
     }
 
     /**
