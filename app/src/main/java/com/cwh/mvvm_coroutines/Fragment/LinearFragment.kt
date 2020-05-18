@@ -15,10 +15,10 @@ import androidx.fragment.app.Fragment
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.cwh.mvvm_base.base.ext.click
 import com.cwh.mvvm_coroutines.R
 import com.cwh.mvvm_coroutines_base.base.adapter.BaseRecyclerViewAdapter
 import com.cwh.mvvm_coroutines_base.base.adapter.SimpleLoadMoreView
-import com.cwh.mvvm_coroutines_base.base.click
 import com.cwh.mvvm_coroutines_base.utils.DisplayUtils
 import com.cwh.mvvm_coroutines_base.utils.LogUtils
 import com.cwh.mvvm_coroutines.utils.GlideUtils

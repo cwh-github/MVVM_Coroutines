@@ -10,6 +10,8 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.cwh.mvvm_base.base.ext.click
+import com.cwh.mvvm_base.base.ext.find
 import com.cwh.mvvm_coroutines.BR
 import com.cwh.mvvm_coroutines.R
 import com.cwh.mvvm_coroutines.databinding.CommentBinding
@@ -18,8 +20,6 @@ import com.cwh.mvvm_coroutines.utils.GlideUtils
 import com.cwh.mvvm_coroutines.utils.TimeParseUtils
 import com.cwh.mvvm_coroutines_base.base.Status
 import com.cwh.mvvm_coroutines_base.base.adapter.BaseRecyclerViewAdapter
-import com.cwh.mvvm_coroutines_base.base.click
-import com.cwh.mvvm_coroutines_base.base.find
 import com.cwh.mvvm_coroutines_base.base.view.BaseActivity
 import com.cwh.mvvm_coroutines_base.utils.LogUtils
 import kotlinx.android.synthetic.main.activity_comment.*

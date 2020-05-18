@@ -1,4 +1,4 @@
-package com.cwh.mvvm_coroutines_base.base
+package com.cwh.mvvm_base.base.ext
 
 import android.view.View
 import androidx.annotation.IdRes
@@ -40,10 +40,10 @@ var lastClickViewHashCode:Int=0
  */
 fun View.click(time: Long = 500,listener: (View) -> Unit) {
     this.setOnClickListener {
-        if (abs(System.currentTimeMillis() - lastClickTime) > time || lastClickViewHashCode!=this.hashCode()) {
+        if (abs(System.currentTimeMillis() - lastClickTime) > time || lastClickViewHashCode !=this.hashCode()) {
             listener(this)
             lastClickTime = System.currentTimeMillis()
-            lastClickViewHashCode=this.hashCode()
+            lastClickViewHashCode =this.hashCode()
         }
     }
 }

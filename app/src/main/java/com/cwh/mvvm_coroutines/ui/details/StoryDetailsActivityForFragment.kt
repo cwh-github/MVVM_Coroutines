@@ -8,13 +8,13 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.cwh.mvvm_base.base.ext.click
 import com.cwh.mvvm_coroutines.BR
 import com.cwh.mvvm_coroutines.R
 import com.cwh.mvvm_coroutines.databinding.StoryDetailsActivityFragmentBinding
 import com.cwh.mvvm_coroutines.model.Story
 import com.cwh.mvvm_coroutines.ui.comment.CommentActivity
 import com.cwh.mvvm_coroutines_base.base.Status
-import com.cwh.mvvm_coroutines_base.base.click
 import com.cwh.mvvm_coroutines_base.base.observerEvent
 import com.cwh.mvvm_coroutines_base.base.view.BaseActivity
 import com.cwh.mvvm_coroutines_base.utils.LogUtils

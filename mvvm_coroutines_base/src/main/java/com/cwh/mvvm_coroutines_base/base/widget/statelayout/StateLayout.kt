@@ -10,8 +10,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.annotation.LayoutRes
+import com.cwh.mvvm_base.base.ext.click
 import com.cwh.mvvm_coroutines_base.R
-import com.cwh.mvvm_coroutines_base.base.click
 
 
 class StateLayout @JvmOverloads constructor(

@@ -9,8 +9,7 @@ import android.widget.LinearLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.cwh.mvvm_coroutines_base.base.click
-import com.cwh.mvvm_coroutines_base.utils.LogUtils
+import com.cwh.mvvm_base.base.ext.click
 
 /**
  * Description:
@@ -27,7 +26,7 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val data: Mutab
         const val EMPTY_VIEW = 0x10000555
     }
 
-    private val mData= mutableListOf<T>()
+    val mData= mutableListOf<T>()
 
     init {
         mData.clear()

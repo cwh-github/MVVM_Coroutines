@@ -7,6 +7,7 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.Observer
+import com.cwh.mvvm_base.base.ext.click
 import com.cwh.mvvm_coroutines.BR
 import com.cwh.mvvm_coroutines.R
 import com.cwh.mvvm_coroutines.databinding.StoryDetailsBinding
@@ -17,7 +18,6 @@ import com.cwh.mvvm_coroutines.ui.comment.CommentActivity
 import com.cwh.mvvm_coroutines.utils.GlideUtils
 import com.cwh.mvvm_coroutines.utils.WebViewUtils
 import com.cwh.mvvm_coroutines_base.base.Status
-import com.cwh.mvvm_coroutines_base.base.click
 import com.cwh.mvvm_coroutines_base.base.observerEvent
 import com.cwh.mvvm_coroutines_base.base.view.BaseActivity
 import com.cwh.mvvm_coroutines_base.utils.DisplayUtils

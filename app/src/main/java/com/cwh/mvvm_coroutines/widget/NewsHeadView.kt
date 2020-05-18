@@ -15,14 +15,14 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.SCROLL_STATE_IDLE
+import com.cwh.mvvm_base.base.ext.click
+import com.cwh.mvvm_base.base.ext.find
 import com.cwh.mvvm_coroutines.R
 import com.cwh.mvvm_coroutines.extension.parseHex
 import com.cwh.mvvm_coroutines.model.TopStory
-import com.cwh.mvvm_coroutines_base.base.find
 import com.cwh.mvvm_coroutines_base.utils.DisplayUtils
 import com.cwh.mvvm_coroutines_base.utils.LogUtils
 import com.cwh.mvvm_coroutines.utils.GlideUtils
-import com.cwh.mvvm_coroutines_base.base.click
 
 /**
  * Description:

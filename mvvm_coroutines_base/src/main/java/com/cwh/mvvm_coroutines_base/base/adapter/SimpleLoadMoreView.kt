@@ -3,9 +3,8 @@ package com.cwh.mvvm_coroutines_base.base.adapter
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import com.cwh.mvvm_base.base.ext.find
 import com.cwh.mvvm_coroutines_base.R
-import com.cwh.mvvm_coroutines_base.base.find
 
 /**
  * Description:加载更多View实例，如需要自己实现，需要实现BaseLoadMoreView

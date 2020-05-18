@@ -14,6 +14,8 @@ import androidx.lifecycle.Observer
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.cwh.mvvm_base.base.ext.click
+import com.cwh.mvvm_base.base.ext.find
 import com.cwh.mvvm_coroutines.BR
 import com.cwh.mvvm_coroutines.R
 import com.cwh.mvvm_coroutines.databinding.HomeViewDataBinding
@@ -33,8 +35,6 @@ import com.cwh.mvvm_coroutines.widget.NewsHeadView
 import com.cwh.mvvm_coroutines_base.base.Status
 import com.cwh.mvvm_coroutines_base.base.adapter.BaseRecyclerViewAdapter
 import com.cwh.mvvm_coroutines_base.base.adapter.SimpleLoadMoreView
-import com.cwh.mvvm_coroutines_base.base.click
-import com.cwh.mvvm_coroutines_base.base.find
 import com.cwh.mvvm_coroutines_base.base.view.BaseActivity
 import com.cwh.mvvm_coroutines_base.utils.TimeCovertUtils
 import com.cwh.mvvm_coroutines_base.utils.ToastUtils
