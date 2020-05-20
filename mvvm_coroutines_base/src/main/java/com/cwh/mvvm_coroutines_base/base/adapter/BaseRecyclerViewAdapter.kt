@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.view.ViewParent
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -16,7 +17,7 @@ import com.cwh.mvvm_base.base.ext.click
  * Date：2020/1/8 0008-11:40
  * Author: cwh
  */
-abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val data: MutableList<T>) :
+abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, data: MutableList<T>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -26,7 +27,8 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val data: Mutab
         const val EMPTY_VIEW = 0x10000555
     }
 
-    val mData= mutableListOf<T>()
+    var mData= mutableListOf<T>()
+        internal set
 
     init {
         mData.clear()
@@ -761,6 +763,16 @@ abstract class BaseRecyclerViewAdapter<T>(val mContext: Context, val data: Mutab
             val position = oldSize + (if (hasHeaderView()) 1 else 0)
             notifyItemRangeInserted(position, data.size)
         }
+    }
+
+    /**
+     * 应用DiffUtil 得出的result应用到RecyclerView上
+     * @param diffResult 通过DiffUtil 得出的Diff 结果
+     * @param newData 新的数据源
+     */
+    fun applyDiffResult(diffResult: DiffUtil.DiffResult, newData: MutableList<T>) {
+        diffResult.dispatchUpdatesTo(BaseRecyclerViewListUpdateCallback(this))
+        this.mData = newData
     }
 
     /**
