@@ -156,7 +156,15 @@ class StoryDetailsActivityForFragment : BaseActivity<StoryDetailsViewModel,
         }
 
         mRelShare.click{
-            ToastUtils.showToast(this,"并没有卵用 (ノ—_—)ノ~┴————┴ ")
+            if (mStoryId == null) {
+                ToastUtils.showToast(this, "并没有卵用 (ノ—_—)ノ~┴————┴ ")
+            } else {
+                val url="https://daily.zhihu.com/story/$mStoryId"
+                val intent = Intent(Intent.ACTION_SEND)
+                intent.putExtra(Intent.EXTRA_TEXT, url)
+                intent.type = "text/plain"
+                startActivity(Intent.createChooser(intent, "分享"))
+            }
         }
     }
 
