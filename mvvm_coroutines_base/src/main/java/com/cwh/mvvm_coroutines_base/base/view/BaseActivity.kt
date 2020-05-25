@@ -29,6 +29,8 @@ abstract class BaseActivity<VM : BaseViewModel<*>, V : ViewDataBinding> : AppCom
      *  ViewModel实例，主要用于数据操作
      *  当不需要ViewModel时，直接写明
      *  类型为NoViewModel即可
+     *
+     *  建议用 ktx 的 by viewModels() 创建
      */
     protected abstract val mViewModel: VM
 
@@ -45,8 +47,6 @@ abstract class BaseActivity<VM : BaseViewModel<*>, V : ViewDataBinding> : AppCom
 
     //使用DataBinding时，对应的Binding实例
     private lateinit var mBinding: V
-
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,7 +88,7 @@ abstract class BaseActivity<VM : BaseViewModel<*>, V : ViewDataBinding> : AppCom
      */
     private fun isUseViewDataBinding(): Boolean {
         val type = javaClass.genericSuperclass as? ParameterizedType
-        LogUtils.d("Binding","$type")
+        LogUtils.d("Binding", "$type")
         return if (type != null) {
             val clz = type!!.actualTypeArguments[1] as Class<*>
             ViewDataBinding::class.java != clz && ViewDataBinding::class.java.isAssignableFrom(clz)
@@ -147,36 +147,43 @@ abstract class BaseActivity<VM : BaseViewModel<*>, V : ViewDataBinding> : AppCom
      * 此Factory默认的是找一个以application为参数的构造方法构造实例，如果此构造方法不存在，会报错，
      * 就算生成成功，此时Repository为null,不能调用Repository的方法获取数据
      *
+     * 在新版activity-ktx中已经自带了lazy的生成ViewModel的方法，且可以生成包含SaveStateHandle参数
+     * 所以在新版中创建ViewModel不建议用此方法，直接用
+     * ktx 中的 by viewModels()，其会创建lazy的ViewModels的实例，且会根据是否有SaveStateHandle创建
+     * 含SaveStateHandle的ViewModel实例（跟源码可以看到）
+     *
+     * 建议用 by viewModels()创建
+     *
      * @param cls
      * @param <T>
      * @return</T>
      * */
     open fun <T : ViewModel> createViewModel(activity: FragmentActivity, cls: Class<T>): T {
-        return ViewModelProviders.of(activity).get(cls)
+        return ViewModelProvider(activity, defaultViewModelProviderFactory).get(cls)
     }
 
-    private val REQUEST_PERMISSON_CODE=1001
+    private val REQUEST_PERMISSON_CODE = 1001
 
     /**
      * check Permission
      *
      *  如果需要申请权限，进行权限申请的请求
      */
-    open fun checkPermission(permissions:Array<String>):Boolean{
-        if(Build.VERSION.SDK_INT<Build.VERSION_CODES.M){
+    open fun checkPermission(permissions: Array<String>): Boolean {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return true
         }
 
-        var result=true
-        val needRequestPermissions= mutableListOf<String>()
+        var result = true
+        val needRequestPermissions = mutableListOf<String>()
         permissions.forEach {
-            if(ContextCompat.checkSelfPermission(this,it)==PackageManager.PERMISSION_DENIED){
-                result=false
+            if (ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_DENIED) {
+                result = false
                 needRequestPermissions.add(it)
             }
         }
-        if(needRequestPermissions.size>0){
-            requestPermissions(needRequestPermissions.toTypedArray(),REQUEST_PERMISSON_CODE)
+        if (needRequestPermissions.size > 0) {
+            requestPermissions(needRequestPermissions.toTypedArray(), REQUEST_PERMISSON_CODE)
         }
         return result
     }
@@ -189,32 +196,32 @@ abstract class BaseActivity<VM : BaseViewModel<*>, V : ViewDataBinding> : AppCom
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when(requestCode){
-            REQUEST_PERMISSON_CODE->{
-                val mNeedRequestPermissions= mutableListOf<String>()
+        when (requestCode) {
+            REQUEST_PERMISSON_CODE -> {
+                val mNeedRequestPermissions = mutableListOf<String>()
                 grantResults.forEachIndexed { index, result ->
-                    if(result==PackageManager.PERMISSION_DENIED){
+                    if (result == PackageManager.PERMISSION_DENIED) {
                         mNeedRequestPermissions.add(permissions[index])
                     }
                 }
-                if(mNeedRequestPermissions.size>0){
+                if (mNeedRequestPermissions.size > 0) {
                     //是否需要展示为什么需要请求权限的对话框
                     var resultRational = true
                     mNeedRequestPermissions.forEach {
-                        if(!shouldShowRequestPermissionRationale(it)){
-                            resultRational=false
+                        if (!shouldShowRequestPermissionRationale(it)) {
+                            resultRational = false
                             return@forEach
                         }
                     }
                     //展示为什么需要请求权限的对话框
-                    if(resultRational){
+                    if (resultRational) {
                         showRationaleDialog(mNeedRequestPermissions)
                         //打开设置界面，手动开启权限
-                    }else{
+                    } else {
                         showOpenSettingDialog(mNeedRequestPermissions)
                     }
 
-                }else{
+                } else {
                     onPermissionGrant()
                 }
 

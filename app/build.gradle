@@ -69,6 +69,10 @@ android {
 
     }
 
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
     android.applicationVariants.all { variant ->
         variant.outputs.all {
             outputFileName = "app_news" + "_" + buildType.name +
