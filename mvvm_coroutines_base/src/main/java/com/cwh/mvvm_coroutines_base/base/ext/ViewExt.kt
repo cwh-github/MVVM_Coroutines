@@ -1,4 +1,4 @@
-package com.cwh.mvvm_base.base.ext
+package com.cwh.mvvm_coroutines_base.base.ext
 
 import android.view.View
 import androidx.annotation.IdRes

@@ -2,7 +2,7 @@ package com.cwh.mvvm_coroutines_base.base.binding
 
 import android.view.View
 import androidx.databinding.BindingAdapter
-import com.cwh.mvvm_base.base.ext.click
+import com.cwh.mvvm_coroutines_base.base.ext.click
 import com.cwh.mvvm_coroutines_base.base.binding.command.BindingCommand
 
 /**

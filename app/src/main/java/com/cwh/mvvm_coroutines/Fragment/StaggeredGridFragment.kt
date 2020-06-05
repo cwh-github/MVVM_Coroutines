@@ -11,7 +11,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.cwh.mvvm_base.base.ext.click
+import com.cwh.mvvm_coroutines_base.base.ext.click
 import com.cwh.mvvm_coroutines.R
 import com.cwh.mvvm_coroutines_base.base.adapter.BaseRecyclerViewAdapter
 import com.cwh.mvvm_coroutines_base.base.adapter.SimpleLoadMoreView

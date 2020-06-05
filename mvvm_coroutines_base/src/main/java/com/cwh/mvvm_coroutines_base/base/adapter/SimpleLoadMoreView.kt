@@ -3,7 +3,7 @@ package com.cwh.mvvm_coroutines_base.base.adapter
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
-import com.cwh.mvvm_base.base.ext.find
+import com.cwh.mvvm_coroutines_base.base.ext.find
 import com.cwh.mvvm_coroutines_base.R
 
 /**

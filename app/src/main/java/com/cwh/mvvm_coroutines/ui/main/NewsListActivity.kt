@@ -14,8 +14,8 @@ import androidx.lifecycle.Observer
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.cwh.mvvm_base.base.ext.click
-import com.cwh.mvvm_base.base.ext.find
+import com.cwh.mvvm_coroutines_base.base.ext.click
+import com.cwh.mvvm_coroutines_base.base.ext.find
 import com.cwh.mvvm_coroutines.BR
 import com.cwh.mvvm_coroutines.R
 import com.cwh.mvvm_coroutines.databinding.HomeViewDataBinding

@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.cwh.mvvm_base.base.ext.click
+import com.cwh.mvvm_coroutines_base.base.ext.click
 
 /**
  * Description:

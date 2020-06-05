@@ -105,8 +105,6 @@ class RetrofitUtils {
         fun <T> createServiceInstance(cls: Class<T>): T {
             return newRetrofitInstance().create(cls)
         }
-
-
     }
 
 
