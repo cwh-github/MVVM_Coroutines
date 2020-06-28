@@ -15,6 +15,10 @@ import java.lang.Exception
  *  一般有数据库时，本地数据库作为单一可信数据来源
  *  在请求到网络数据后，将数据存储进数据库，通过liveData,在数据库发生改变时，将
  *  最新数据重数据库返回，再显示在UI上
+ *
+ *  参考实例：(https://github.com/android/architecture-components-samples/blob/88747993139224a
+ *  4bb6dbe985adf652d557de621/GithubBrowserSample/app/src/main/java/com/android/example/github/
+ *  repository/NetworkBoundResource.kt)
  * Date：2020/3/4-17:03
  * Author: cwh
  *

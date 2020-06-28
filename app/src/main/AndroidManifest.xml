@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="LockedOrientationActivity"
     package="com.cwh.mvvm_coroutines">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -18,7 +20,8 @@
 
         <activity
             android:name=".ui.details.StoryDetailsActivityForFragment"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+             />
 
         <service
             android:name=".service.DownloadStoriesService"

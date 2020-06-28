@@ -1,7 +1,11 @@
 package com.cwh.mvvm_coroutines_base.base.ext
 
+import android.content.Context
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.annotation.IdRes
+import androidx.annotation.LayoutRes
 import kotlin.math.abs
 
 /**
@@ -22,13 +26,13 @@ fun <T : View> View.find(@IdRes id: Int): T =
  *
  *
  * */
-var lastClickTime: Long=0
+var lastClickTime: Long = 0
     private set
 
 /**
  * 上次点击的 view 对象对应的 hashcode (不要对该值进行赋值操作)
  */
-var lastClickViewHashCode:Int=0
+var lastClickViewHashCode: Int = 0
     private set
 
 
@@ -38,16 +42,19 @@ var lastClickViewHashCode:Int=0
  * @param time 指定时间间隔内为重复点击，默认500毫秒
  *
  */
-fun View.click(time: Long = 500,listener: (View) -> Unit) {
+fun View.click(time: Long = 500, listener: (View) -> Unit) {
     this.setOnClickListener {
-        if (abs(System.currentTimeMillis() - lastClickTime) > time || lastClickViewHashCode !=this.hashCode()) {
+        if (abs(System.currentTimeMillis() - lastClickTime) > time || lastClickViewHashCode != this.hashCode()) {
             listener(this)
             lastClickTime = System.currentTimeMillis()
-            lastClickViewHashCode =this.hashCode()
+            lastClickViewHashCode = this.hashCode()
         }
     }
 }
 
+
+fun Context.inflate(@LayoutRes layoutId: Int, root: ViewGroup?): View =
+    LayoutInflater.from(this).inflate(layoutId, root, false)
 
 
 

@@ -8,6 +8,11 @@
         android:requestLegacyExternalStorage="true"
         >
 
+        <!--对高宽高比的手机做处理        -->
+        <meta-data
+            android:name="android.max_aspect"
+            android:value="2.4" />
+
         <!-- Android 7.0以后获取uri需要此权限 -->
         <provider
             android:name="androidx.core.content.FileProvider"

@@ -17,21 +17,20 @@ import java.lang.Exception
 import kotlin.coroutines.CoroutineContext
 
 
-
 /**
  * An [IntentService] subclass for handling asynchronous task requests in
  * a service on a separate handler thread.
  *
  * helper methods.
  */
-class CleanCacheService : IntentService("CleanCacheIntentService"),CoroutineScope {
+class CleanCacheService : IntentService("CleanCacheIntentService"), CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = SupervisorJob()
 
     //最近时间n天之后的所有数据
-    private val DAY_SPACE=15
+    private val DAY_SPACE = 15
 
-    private val mDbHelper=DataBaseHelper.instance()
+    private val mDbHelper = DataBaseHelper.instance()
 
     override fun onHandleIntent(intent: Intent?) {
         clean()
@@ -41,10 +40,10 @@ class CleanCacheService : IntentService("CleanCacheIntentService"),CoroutineScop
      *
      * 清理缓存的文件
      */
-    private suspend  fun cleanFiles(needDelImages: MutableList<String>) {
-        for (image in needDelImages){
-            val file=File(image)
-            if(file.exists()){
+    private suspend fun cleanFiles(needDelImages: MutableList<String>) {
+        for (image in needDelImages) {
+            val file = File(image)
+            if (file.exists()) {
                 file.deleteRecursively()
             }
         }
@@ -54,46 +53,50 @@ class CleanCacheService : IntentService("CleanCacheIntentService"),CoroutineScop
      * 清理数据库中缓存数据
      *
      */
-    private fun clean()=launch(coroutineContext){
-        val lastStory=mDbHelper.storyLatest()
-        var latestDate=TimeParseUtils.currentTime2Long()
-        if(lastStory?.size?:0>0){
-            latestDate=lastStory!![0].date
+    private fun clean() = launch(coroutineContext) {
+        val lastStory = mDbHelper.storyLatest()
+        var latestDate = TimeParseUtils.currentTime2Long()
+        if (lastStory?.size ?: 0 > 0) {
+            latestDate = lastStory!![0].date
         }
-        val deleteStartDate=TimeParseUtils.beforeTime2Long(latestDate,DAY_SPACE)
-        val needDelStory=mDbHelper.queryByLessDate(deleteStartDate)
-        LogUtils.d("Need Del","Need Del size ${needDelStory?.size}")
-        val needDelImages= mutableListOf<String>()
+        val deleteStartDate = TimeParseUtils.beforeTime2Long(latestDate, DAY_SPACE)
+        val needDelStory = mDbHelper.queryByLessDate(deleteStartDate)
+        LogUtils.d("Need Del", "Need Del size ${needDelStory?.size}")
+        val needDelImages = mutableListOf<String>()
         needDelStory?.let {
-            for(story in needDelStory){
+            for (story in needDelStory) {
+                //对于收藏的内容，不进行删除
+                if (story.isLike) {
+                    continue
+                }
                 try {
-                    val images=story.images
-                    if(images?.size?:0>0){
+                    val images = story.images
+                    if (images?.size ?: 0 > 0) {
                         needDelImages.add(images!![0])
                     }
-                    val detailsStory=mDbHelper.queryDetailsById(story.id)
+                    val detailsStory = mDbHelper.queryDetailsById(story.id)
                     detailsStory?.let {
                         needDelImages.add(it.image)
-                        val doc=Jsoup.parse(it.content)
-                        val images=doc.select("img.content-image")
-                        for(img in images){
-                            var path=img.attr("src")
-                            if(!path.startsWith("http")){
-                                if(path.startsWith("file://")){
-                                    path=path.replace("file://","")
+                        val doc = Jsoup.parse(it.content)
+                        val images = doc.select("img.content-image")
+                        for (img in images) {
+                            var path = img.attr("src")
+                            if (!path.startsWith("http")) {
+                                if (path.startsWith("file://")) {
+                                    path = path.replace("file://", "")
                                 }
                                 needDelImages.add(path)
                             }
                         }
                     }
-                }catch (e:Exception){
-                    LogUtils.e("Error","Error for clean : ${e.message}")
+                } catch (e: Exception) {
+                    LogUtils.e("Error", "Error for clean : ${e.message}")
                 }
 
             }
         }
         cleanFiles(needDelImages)
-        LogUtils.d("Del Need","Need Del content ${needDelImages.size}")
+        LogUtils.d("Del Need", "Need Del content ${needDelImages.size}")
         mDbHelper.deleteStory(deleteStartDate)
         SPUtils.saveCleanTime()
     }
@@ -118,7 +121,6 @@ class CleanCacheService : IntentService("CleanCacheIntentService"),CoroutineScop
             val intent = Intent(context, CleanCacheService::class.java)
             context.startService(intent)
         }
-
 
 
     }
