@@ -1,10 +1,13 @@
 package com.cwh.mvvm_coroutines_base.base.widget.dialog
 
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
+import android.os.Bundle
 import android.os.Looper
-import android.view.Window
-import android.view.WindowManager
+import android.view.*
+import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.LifecycleObserver
 import com.cwh.mvvm_coroutines_base.R
 import com.cwh.mvvm_coroutines_base.base.ext.inflate
 import com.cwh.mvvm_coroutines_base.utils.DisplayUtils
@@ -30,7 +33,7 @@ class LoadingDialog(
     context: Context,
     private val mMinDelayTime: Long = 500,
     private val mMinShowTime: Long = 500
-) {
+) : AlertDialog(context) {
 
     init {
         createDialog(context)
@@ -54,8 +57,8 @@ class LoadingDialog(
         mPostShow = false
         if (!mDismissed) {
             mStartShowTime = System.currentTimeMillis()
-            if (!mDialog.isShowing) {
-                mDialog.show()
+            if (!this.isShowing) {
+                this.show()
             }
         }
     }
@@ -63,18 +66,16 @@ class LoadingDialog(
     private val mDelayHideRunnable = Runnable {
         mPostHide = false
         mStartShowTime = -1L
-        if (mDialog.isShowing) {
-            mDialog.dismiss()
+        if (this.isShowing) {
+            this.dismiss()
         }
     }
 
-    private lateinit var mDialog: Dialog
     private fun createDialog(context: Context) {
-        mDialog = Dialog(context)
-        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
         val view = context.inflate(R.layout.layout_loading_dialog, null)
-        mDialog.setContentView(view)
-        val window: Window? = mDialog.window
+        setView(view)
+        val window: Window? = window
         //要加上设置背景，否则dialog宽高设置无作用
         window?.setBackgroundDrawableResource(android.R.color.transparent)
         val layoutParams = window?.attributes
@@ -88,8 +89,10 @@ class LoadingDialog(
 
     /**
      * 延迟show,在经过指定时间后，还需要显示(handler队列中还有要显示对话框的Runnable)则显示出来
+     *
+     * 如果希望有延迟显示和加载的功能，不要调用 dialog自带的show() 和 dismiss方法
      */
-    fun show() {
+    fun showDialog() {
         mStartShowTime = -1
         mDismissed = false
         mHandler.removeCallbacks(mDelayHideRunnable)
@@ -104,20 +107,28 @@ class LoadingDialog(
      * 延迟hide,在经过指定时间后，隐藏对话框
      * 如果对话框已显示出来且小于最小显示时间，则延迟到指定时间后隐藏
      * 如果显示时间大于最小显示时间或为显示过，则隐藏
+     *
+     * 如果希望有延迟显示和加载的功能，不要调用 dialog自带的show() 和 dismiss方法
      */
-    fun hide() {
+    fun dismissDialog() {
         mDismissed = true
         mHandler.removeCallbacks(mDelayShowRunnable)
         mPostShow = false
         val haveShowTime = System.currentTimeMillis() - mStartShowTime
         if (haveShowTime > mMinDelayTime || mStartShowTime == -1L) {
-            mDialog.dismiss()
+            dismiss()
         } else {
             if (!mPostHide) {
                 mPostHide = true
                 mHandler.postDelayed(mDelayHideRunnable, mMinShowTime - haveShowTime)
             }
         }
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        mHandler.removeCallbacks(mDelayHideRunnable)
+        mHandler.removeCallbacks(mDelayShowRunnable)
     }
 
 }
