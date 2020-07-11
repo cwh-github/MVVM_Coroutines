@@ -1,16 +1,18 @@
 package com.cwh.mvvm_coroutines_base.base.viewmodel
 
 import android.app.Application
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.cwh.mvvm_coroutines_base.REQ_SUC
 import com.cwh.mvvm_coroutines_base.base.Entity
 import com.cwh.mvvm_coroutines_base.base.Event
 import com.cwh.mvvm_coroutines_base.base.ExceptionHandle
-import com.cwh.mvvm_coroutines_base.base.Result
 import com.cwh.mvvm_coroutines_base.base.repository.IRepository
 import com.cwh.mvvm_coroutines_base.utils.LogUtils
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 /**
  * Description:BaseViewModel 主要的数据逻辑操作在ViewModel中执行
@@ -42,7 +44,6 @@ abstract class BaseViewModel<T : IRepository>(application: Application) :
             block()
         }
     }
-
 
 
     /**
@@ -136,7 +137,7 @@ abstract class BaseViewModel<T : IRepository>(application: Application) :
         onStart: () -> Unit = {},
         block: suspend CoroutineScope.() -> Unit,
         onError: (ExceptionHandle.ResponseThrowable) -> Unit,
-        onComplete: () -> Unit={}
+        onComplete: () -> Unit = {}
     ) {
         launchOnUI {
             handleException({
@@ -148,8 +149,10 @@ abstract class BaseViewModel<T : IRepository>(application: Application) :
                 }
             }, {
                 onError(ExceptionHandle.handleException(it))
-                mDefUIEvent.mToastEvent.value = Event("${ExceptionHandle.handleException(it).code} :" +
-                        " ${ExceptionHandle.handleException(it).message}")
+                mDefUIEvent.mToastEvent.value = Event(
+                    "${ExceptionHandle.handleException(it).code} :" +
+                            " ${ExceptionHandle.handleException(it).message}"
+                )
             }, {
                 onComplete()
             })
@@ -184,7 +187,7 @@ abstract class BaseViewModel<T : IRepository>(application: Application) :
             mDefUIEvent.mToastEvent.value = Event(msg)
         },
         onError: (ExceptionHandle.ResponseThrowable) -> Unit,
-        onComplete: () -> Unit={}
+        onComplete: () -> Unit = {}
     ) {
         launchOnUI {
             handleException({
@@ -208,8 +211,10 @@ abstract class BaseViewModel<T : IRepository>(application: Application) :
             }, {
                 onError(ExceptionHandle.handleException(it))
                 //data.value= Result.error(it.message,null)
-                mDefUIEvent.mToastEvent.value = Event("${ExceptionHandle.handleException(it).code} :" +
-                        " ${ExceptionHandle.handleException(it).message}")
+                mDefUIEvent.mToastEvent.value = Event(
+                    "${ExceptionHandle.handleException(it).code} :" +
+                            " ${ExceptionHandle.handleException(it).message}"
+                )
             }, {
                 onComplete()
             })
@@ -223,8 +228,8 @@ abstract class BaseViewModel<T : IRepository>(application: Application) :
      * 一系列操作符对数据进行操作
      *
      * 如：flow{
-             emit(block())
-            }.flowOn(Dispatchers.IO).map{}
+    emit(block())
+    }.flowOn(Dispatchers.IO).map{}
 
      * 对于使用该方法，需要在协程作用域中使用，
      * (含有suspend函数)
@@ -237,8 +242,8 @@ abstract class BaseViewModel<T : IRepository>(application: Application) :
      *  }
      *
      */
-    fun <R> launchFlow(block: suspend () -> R):Flow<R> {
-        return flow{
+    fun <R> launchFlow(block: suspend () -> R): Flow<R> {
+        return flow {
             emit(block())
         }
     }

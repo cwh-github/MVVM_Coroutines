@@ -46,14 +46,23 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
-    //viewModel and liveData
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    //viewModel and liveData lifecycle-extensions 中的 API 已弃用。您可以为特定 Lifecycle 工件添加所需的依赖项。
+    //https://developer.android.google.cn/jetpack/androidx/releases/lifecycle
+    //implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
+
+
+    // LiveData -ktx
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0"
+
+    // Lifecycles only (without ViewModel or LiveData)-ktx
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.2.0"
+
 
     // Kotlin
     implementation "androidx.activity:activity-ktx:1.1.0"
 
-    implementation "androidx.fragment:fragment-ktx:1.2.4"
+    implementation "androidx.fragment:fragment-ktx:1.2.5"
 
     //coroutines
     //api 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.2'
@@ -65,13 +74,12 @@ dependencies {
     //okhttp
     api 'com.squareup.okhttp3:okhttp:4.2.2'
     //http log
-    api ('com.github.ihsanbal:LoggingInterceptor:3.0.0') {
+    api('com.github.ihsanbal:LoggingInterceptor:3.0.0') {
         exclude group: 'org.json', module: 'json'
     }
 
     //内存泄露检测工具
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-beta-5'
-
 
 
 }

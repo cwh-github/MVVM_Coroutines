@@ -35,7 +35,7 @@ interface StoryDao {
     @Query("Select * From story where date= (Select MAX(date) From story) and isTopStory==0 order by orderNum desc ")
     suspend fun queryLatestStory(): List<Story>?
 
-    @Query("Delete From story where date<:date and isLike==1")
+    @Query("Delete From story where date<:date and isLike==0")
     suspend fun deleteStory(date:Long)
 
     @Query("Select * From story Where date<:date")

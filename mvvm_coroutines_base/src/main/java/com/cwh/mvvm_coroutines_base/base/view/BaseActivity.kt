@@ -12,7 +12,6 @@ import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import com.cwh.mvvm_coroutines_base.utils.ToastUtils
 import com.cwh.mvvm_coroutines_base.base.observerEvent
 import com.cwh.mvvm_coroutines_base.base.viewmodel.BaseViewModel
@@ -235,21 +234,18 @@ abstract class BaseActivity<VM : BaseViewModel<*>, V : ViewDataBinding> : AppCom
      * 显示对话框
      */
     protected open fun showRationaleDialog(mNeedReqPermissions: MutableList<String>) {
-
     }
 
     /**
      * 显示对话框，跳转设置界面开启权限
      */
     protected open fun showOpenSettingDialog(mNeedReqPermissions: MutableList<String>) {
-
     }
 
     /**
      * 当请求权限全部通过时，执行该方法
      */
     protected open fun onPermissionGrant() {
-
     }
 
 

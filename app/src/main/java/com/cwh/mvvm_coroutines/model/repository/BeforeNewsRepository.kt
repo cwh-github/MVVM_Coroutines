@@ -15,43 +15,45 @@ import com.cwh.mvvm_coroutines_base.utils.LogUtils
  * Date：2020/3/3-13:35
  * Author: cwh
  */
-interface IBeforeNewsRepository{
+interface IBeforeNewsRepository {
 
     /**
      * 根据给定时间，获取之前news
      * @param date 给定时间 ，如：20200303
      */
-    suspend fun beforeNews(date:Long):BeforeNews
+    suspend fun beforeNews(date: Long): BeforeNews
 }
 
-class RemoteBeforeNewsRepository:IBeforeNewsRepository, BaseRemoteRepository() {
+class RemoteBeforeNewsRepository : IBeforeNewsRepository, BaseRemoteRepository() {
 
-    private val apiService=RetrofitUtils.createServiceInstance(NewsApiService::class.java)
+    private val apiService = RetrofitUtils.createServiceInstance(NewsApiService::class.java)
     override suspend fun beforeNews(date: Long): BeforeNews {
-        val result=apiService.beforeNewsData(date)
-        result.stories?.forEachIndexed{index,story ->
-            story.orderNum=result.stories!!.size-index
-            story.date=result.date
+        val result = apiService.beforeNewsData(date)
+        result.stories?.forEachIndexed { index, story ->
+            story.orderNum = result.stories!!.size - index
+            story.date = result.date
         }
         return result
     }
 
 }
 
-class LocalBeforeNewsRepository:IBeforeNewsRepository, BaseLocalRepository() {
+class LocalBeforeNewsRepository : IBeforeNewsRepository, BaseLocalRepository() {
 
-    private val helper=DataBaseHelper.instance()
+    private val helper = DataBaseHelper.instance()
     override suspend fun beforeNews(date: Long): BeforeNews {
-        val stories=helper.storyByDate(date)
-        return BeforeNews(TimeParseUtils.beforeTime2Long(date,1),
-            stories,false)
+        val stories = helper.storyByDate(date)
+        return BeforeNews(
+            TimeParseUtils.beforeTime2Long(date, 1),
+            stories, false
+        )
     }
 
 }
 
 
-class BeforeNewsRepository :IBeforeNewsRepository,
-    BaseRepository<RemoteBeforeNewsRepository,LocalBeforeNewsRepository>(){
+class BeforeNewsRepository : IBeforeNewsRepository,
+    BaseRepository<RemoteBeforeNewsRepository, LocalBeforeNewsRepository>() {
 
 
     override val remote: RemoteBeforeNewsRepository
@@ -59,10 +61,10 @@ class BeforeNewsRepository :IBeforeNewsRepository,
     override val local: LocalBeforeNewsRepository
         get() = LocalBeforeNewsRepository()
 
-    private val helper=DataBaseHelper.instance()
+    private val helper = DataBaseHelper.instance()
     override suspend fun beforeNews(date: Long): BeforeNews {
-        val localResult=local.beforeNews(date)
-        return if(localResult.stories.isNullOrEmpty() || localResult.stories!!.size<=5){
+        val localResult = local.beforeNews(date)
+        return if (localResult.stories.isNullOrEmpty() || localResult.stories!!.size <= 5) {
             try {
                 val remoteResult = remote.beforeNews(date)
                 if (localResult.stories != null && remoteResult.stories != null) {
@@ -78,11 +80,11 @@ class BeforeNewsRepository :IBeforeNewsRepository,
                 }
                 helper.insertBeforeStory(remoteResult.stories)
                 remoteResult
-            }catch (e:Exception){
-                LogUtils.e("Error","Load Before News Error is :${e.message}")
+            } catch (e: Exception) {
+                LogUtils.e("Error", "Load Before News Error is :${e.message}")
                 localResult
             }
-        }else{
+        } else {
             localResult
         }
     }
