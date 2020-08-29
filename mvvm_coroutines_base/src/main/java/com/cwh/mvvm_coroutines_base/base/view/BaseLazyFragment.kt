@@ -23,14 +23,18 @@ abstract class BaseLazyFragment<VM : BaseViewModel<*>, V : ViewDataBinding> :
     /**
      * 是否是第一次对于用户可见
      */
-    private var isFirstVisible: Boolean = true
+    private var isFirstVisible: Boolean = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        isFirstVisible = true
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        isFirstVisible = true
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
@@ -48,6 +52,11 @@ abstract class BaseLazyFragment<VM : BaseViewModel<*>, V : ViewDataBinding> :
 
         onFragmentVisibleToUser()
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        isFirstVisible = false
     }
 
     /**
