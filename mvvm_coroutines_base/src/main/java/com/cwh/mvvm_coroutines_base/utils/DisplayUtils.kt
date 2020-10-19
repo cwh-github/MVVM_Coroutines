@@ -151,6 +151,24 @@ object DisplayUtils {
         }
     }
 
+    /**
+     * 设置状态栏字体颜色，亮色状态栏设置字体黑色（Android 6.0 以上才可以设置）
+     */
+    fun lightStatusBar(activity: Activity,isLight:Boolean){
+        if(Build.VERSION.SDK_INT<Build.VERSION_CODES.M){
+            return
+        }
+        val window = activity.window
+        val decorView = window.decorView
+        var visibility = decorView.systemUiVisibility
+        visibility = if (isLight) {
+            visibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        } else {
+            visibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv() //inv 按位取反
+        }
+        decorView.systemUiVisibility = visibility
+    }
+
 
     /**
      * 获取状态栏高度方法
