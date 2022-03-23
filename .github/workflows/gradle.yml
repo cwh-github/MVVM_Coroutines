@@ -20,9 +20,9 @@ jobs:
 
     steps:
      - name: Release APK
-       uses: ShowMeThe/github_action_release@v0.01
+       uses: Vignesh-Desmond/action-release-apk@1.0.5
        with:
          # Github secret token to allow automated publishing of APK to release.
-         GITHUB_TOKEN: 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
+         GITHUB_TOKEN: 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
 
      
