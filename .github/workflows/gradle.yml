@@ -19,5 +19,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-     - name: "Build Android project"
-       uses: vgaidarji/android-github-actions-build@v1.0.1
+     - name: Release APK
+       uses: ShowMeThe/github_action_release@v0.01
+       with:
+         # Github secret token to allow automated publishing of APK to release.
+         GITHUB_TOKEN: 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
+
+     
