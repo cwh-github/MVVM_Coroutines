@@ -19,11 +19,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-     - name: Release APK
-       uses: Vignesh-Desmond/action-release-apk@1.0.5
-       
-       with:
-         # Github secret token to allow automated publishing of APK to release.
-         GITHUB_TOKEN: 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
+     - name: Android Build
+       uses: vgaidarji/android-github-actions-build@v1.0.1
 
      
