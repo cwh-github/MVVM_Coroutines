@@ -79,7 +79,7 @@ class StoryDetailsViewModel(application: Application) :
                 likeCount.value=commentInfo.popularity
             },
             onError = {
-                toastMsg.value=it
+                //toastMsg.value=it
             },
             onComplete = {
             }

@@ -12,7 +12,7 @@ android {
     defaultConfig {
         applicationId "com.cwh.mvvm_coroutines"
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

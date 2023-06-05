@@ -59,7 +59,7 @@ abstract class NetworkBoundResource<ResultType, RequestType> {
      * 获取server数据
      */
     @MainThread
-    abstract fun loadFromServer(): RequestType
+    abstract fun loadFromServer(): ResultType
 
     /**
      * 将数据转为liveData返回

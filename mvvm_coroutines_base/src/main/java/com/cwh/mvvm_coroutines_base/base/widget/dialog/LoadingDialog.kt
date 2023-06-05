@@ -1,13 +1,9 @@
 package com.cwh.mvvm_coroutines_base.base.widget.dialog
 
 import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Context
-import android.os.Bundle
 import android.os.Looper
 import android.view.*
-import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.LifecycleObserver
 import com.cwh.mvvm_coroutines_base.R
 import com.cwh.mvvm_coroutines_base.base.ext.inflate
 import com.cwh.mvvm_coroutines_base.utils.DisplayUtils
@@ -27,7 +23,7 @@ import com.cwh.mvvm_coroutines_base.utils.DisplayUtils
  * Author: cwh
  *
  * @param mMinDelayTime 最小延迟多长时间后显示
- * @param mMinShowTime 显示出对话框后，最下显示的时长
+ * @param mMinShowTime 显示出对话框后，最小显示的时长
  */
 class LoadingDialog(
     context: Context,
@@ -114,13 +110,13 @@ class LoadingDialog(
         mDismissed = true
         mHandler.removeCallbacks(mDelayShowRunnable)
         mPostShow = false
-        val haveShowTime = System.currentTimeMillis() - mStartShowTime
-        if (haveShowTime > mMinDelayTime || mStartShowTime == -1L) {
+        val hasShowTime = System.currentTimeMillis() - mStartShowTime
+        if (hasShowTime > mMinDelayTime || mStartShowTime == -1L) {
             dismiss()
         } else {
             if (!mPostHide) {
                 mPostHide = true
-                mHandler.postDelayed(mDelayHideRunnable, mMinShowTime - haveShowTime)
+                mHandler.postDelayed(mDelayHideRunnable, mMinShowTime - hasShowTime)
             }
         }
     }

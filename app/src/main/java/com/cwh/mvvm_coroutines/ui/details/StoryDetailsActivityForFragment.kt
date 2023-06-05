@@ -41,7 +41,7 @@ class StoryDetailsActivityForFragment : BaseActivity<StoryDetailsViewModel,
     private var mViewPagerAdapter:StoryViewPagerAdapter?=null
 
     companion object{
-        public val READ_LIST_CODE=1000
+        public const val READ_LIST_CODE=1000
     }
 
 
@@ -174,10 +174,14 @@ class StoryDetailsActivityForFragment : BaseActivity<StoryDetailsViewModel,
         //由于ViewPager2为RecyclerView,默认会预加载前后各两个item
         mViewPager.offscreenPageLimit=1
         mViewPager.adapter=mViewPagerAdapter
-        mViewPager.setCurrentItem(index,false)
+        //避免重复设置相同index,重复触发onPageSelected
+        if(mViewPager.currentItem!=index){
+            mViewPager.setCurrentItem(index,false)
+        }
         mViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
 
             override fun onPageSelected(position: Int) {
+                LogUtils.d("ViewPager OnPageSelected")
                 //已到最后，需要加载更多数据
                 if(position==mViewPagerAdapter!!.itemCount-1){
                     val date=mStoryList!![position].date
@@ -188,8 +192,8 @@ class StoryDetailsActivityForFragment : BaseActivity<StoryDetailsViewModel,
                 mLongCount=0
                 mShortCount=0
                 mCount=0
-                mTvMsgCount.text=""
-                mTvLikeCount.text=""
+//                mTvMsgCount.text=""
+//                mTvLikeCount.text=""
                 mViewModel.commentInfo(story.id)
                 mViewModel.storyById(story.id)
             }

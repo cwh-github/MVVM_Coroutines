@@ -26,7 +26,7 @@ class NewsListViewModel(application: Application) :
     override val repo: LatestNewsRepository
         get() = LatestNewsRepository()
 
-    val otherRepo = BeforeNewsRepository()
+    private val otherRepo = BeforeNewsRepository()
 
     val latestNews = MutableLiveData<Result<LatestNews>>()
 

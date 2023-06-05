@@ -388,15 +388,14 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
 
         override fun onBindContentViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             val story = mData[position]
-            when {
-                holder.itemViewType == TIME_CONTENT_TYPE -> {
+            when (holder.itemViewType) {
+                TIME_CONTENT_TYPE -> {
 
                     val mViewHolder = holder as NewsTimeViewHolder
                     mViewHolder.mTvTime.text = TimeParseUtils.mothAndDay(story.date)
 
                 }
-
-                holder.itemViewType == ITEM_CONTENT_TYPE -> {
+                ITEM_CONTENT_TYPE -> {
                     val mViewHolder = holder as NewsContentViewHolder
                     if (story.isRead) {
                         mViewHolder.mTvTitle.alpha = 0.5f
@@ -414,7 +413,7 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
 
                     holder.itemView.click {
                         //                        startActivity(Intent(mContext,StoryDetailsActivity::class.java)
-//                            .putExtra("story",story))
+                        //                            .putExtra("story",story))
                         val list = ArrayList<Story>()
                         var index = 0
                         mData.forEach {
@@ -428,8 +427,8 @@ class NewsListActivity : BaseActivity<NewsListViewModel, HomeViewDataBinding>() 
                         startActivityForResult(
                             Intent(mContext, StoryDetailsActivityForFragment::class.java)
                                 .putExtra("mStoryList", list)
-                                .putExtra("index", index)
-                            , READ_RESULT_CODE
+                                .putExtra("index", index),
+                            READ_RESULT_CODE
                         )
                         if (!story.isRead) {
                             story.isRead = true
