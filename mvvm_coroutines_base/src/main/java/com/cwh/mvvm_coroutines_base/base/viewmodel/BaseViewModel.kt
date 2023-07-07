@@ -29,8 +29,7 @@ import kotlinx.coroutines.flow.flow
  * Author: cwh
  */
 abstract class BaseViewModel<T : IRepository>(application: Application) :
-    AndroidViewModel(application)
-    , IBaseViewModel {
+    AndroidViewModel(application), IBaseViewModel {
     //带加载状态的结果,可以在各个加载时的函数中
     //通过传不同的value来进行加载状态的修改
     //val data=MutableLiveData<Result<String>>()

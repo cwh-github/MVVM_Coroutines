@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
+import android.os.Environment
 import android.provider.MediaStore
 import androidx.annotation.NonNull
 import androidx.core.content.FileProvider
@@ -96,10 +97,14 @@ object FileUtils {
                 path = Uri.decode(path)
                 val cr = context.contentResolver
                 val buff = StringBuffer()
-                buff.append("(").append(MediaStore.Images.ImageColumns.DATA).append("=").append("'$path'").append(")")
+                buff.append("(").append(MediaStore.Images.ImageColumns.DATA).append("=")
+                    .append("'$path'").append(")")
                 val cur = cr.query(
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    arrayOf(MediaStore.Images.ImageColumns._ID, MediaStore.Images.ImageColumns.DATA),
+                    arrayOf(
+                        MediaStore.Images.ImageColumns._ID,
+                        MediaStore.Images.ImageColumns.DATA
+                    ),
                     buff.toString(),
                     null,
                     null
@@ -188,11 +193,11 @@ object FileUtils {
     /**
      * copy File
      */
-    fun copyFile(sourceFile:File,targetFile:File):Boolean{
-        if(!sourceFile.exists()){
+    fun copyFile(sourceFile: File, targetFile: File): Boolean {
+        if (!sourceFile.exists()) {
             throw NoSuchFieldError("sourceFile Not Exist")
         }
-        var result=true
+        var result = true
         try {
             FileOutputStream(targetFile).use { outStream ->
                 val buffer = ByteArray(1024)
@@ -203,9 +208,9 @@ object FileUtils {
                     }
                 }
             }
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
-            result=false
+            result = false
         }
         return result
     }
@@ -226,48 +231,103 @@ object FileUtils {
         saveDirName: String
     ): Boolean {
 
-            val values = ContentValues()
-            values.put(MediaStore.Images.Media.DESCRIPTION, "Scenic Image")
-            values.put(MediaStore.Images.Media.DISPLAY_NAME, saveFileName)
-            values.put(MediaStore.Images.Media.MIME_TYPE, "image/png")
-            values.put(MediaStore.Images.Media.TITLE, "Image.png")
-            values.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/$saveDirName")
+        val values = ContentValues()
+        values.put(MediaStore.Images.Media.DESCRIPTION, "Scenic Image")
+        values.put(MediaStore.Images.Media.DISPLAY_NAME, saveFileName)
+        values.put(MediaStore.Images.Media.MIME_TYPE, "image/png")
+        values.put(MediaStore.Images.Media.TITLE, "Image.png")
+        values.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/$saveDirName")
 
-            val external = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-            val resolver = context.contentResolver
-            val insertUri = resolver.insert(external, values)
-            var inputStream: BufferedInputStream? = null
-            var os: OutputStream? = null
-            var result = false
-            try {
-                inputStream = BufferedInputStream(FileInputStream(sourceFile))
-                if (insertUri != null) {
-                    os = resolver.openOutputStream(insertUri)
-                }
-                if (os != null) {
-                    val buffer = ByteArray(1024 * 4)
-                    var len: Int
-                    while ((inputStream!!.read(buffer)).also { len = it } != -1) {
-                        os!!.write(buffer, 0, len)
-                    }
-                    os!!.flush()
-                }
-                result = true
-            } catch (e: IOException) {
-                result = false
-            } finally {
-                try {
-                    inputStream?.close()
-                } catch (e: java.lang.Exception) {
-                }
-
-                try {
-                    os?.close()
-                } catch (e: java.lang.Exception) {
-                }
-
+        val external = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        val resolver = context.contentResolver
+        val insertUri = resolver.insert(external, values)
+        var inputStream: BufferedInputStream? = null
+        var os: OutputStream? = null
+        var result = false
+        try {
+            inputStream = BufferedInputStream(FileInputStream(sourceFile))
+            if (insertUri != null) {
+                os = resolver.openOutputStream(insertUri)
             }
-            return result
+            if (os != null) {
+                val buffer = ByteArray(1024 * 4)
+                var len: Int
+                while ((inputStream!!.read(buffer)).also { len = it } != -1) {
+                    os!!.write(buffer, 0, len)
+                }
+                os!!.flush()
+            }
+            result = true
+        } catch (e: IOException) {
+            result = false
+        } finally {
+            try {
+                inputStream?.close()
+            } catch (e: java.lang.Exception) {
+            }
+
+            try {
+                os?.close()
+            } catch (e: java.lang.Exception) {
+            }
+
+        }
+        return result
+    }
+
+    /**
+     * 保存图片到相册，Android Q以后，权限限制，不能保存在SD卡任意位置
+     * 只能保存在指定的文件夹
+     *
+     * Android 10中新增了一个RELATIVE_PATH常量，表示文件存储的相对路径，
+     * 可选值有DIRECTORY_DCIM、DIRECTORY_PICTURES、DIRECTORY_MOVIES、DIRECTORY_MUSIC等，
+     * 分别表示相册、图片、电影、音乐等目录。而在之前的系统版本中并没有RELATIVE_PATH，
+     * 所以我们要使用DATA常量（已在Android 10中废弃），并拼装出一个文件存储的绝对路径才行
+     *
+     * @param inputStream 需要保存的图片input流
+     * @param displayName 保存的图片文件名
+     * @param mimeType mimeType 例：“image/\*”
+     *
+     *
+     */
+    fun saveImageToAlbum(
+        context: Context,
+        inputStream: InputStream,
+        displayName: String,
+        mimeType: String
+    ) {
+        val values = ContentValues()
+        values.put(MediaStore.MediaColumns.DISPLAY_NAME, displayName)
+        values.put(MediaStore.MediaColumns.MIME_TYPE, mimeType)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+        } else {
+            values.put(
+                MediaStore.MediaColumns.DATA,
+                "${Environment.getExternalStorageDirectory().path}/${Environment.DIRECTORY_PICTURES}/$displayName"
+            )
+        }
+        val bis = BufferedInputStream(inputStream)
+        bis.use {
+            val uri =
+                context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+            if (uri != null) {
+                val outputStream = context.contentResolver.openOutputStream(uri)
+                if (outputStream != null) {
+                    val bos = BufferedOutputStream(outputStream)
+                    bos.use {
+                        val buffer = ByteArray(1024)
+                        var bytes = bis.read(buffer)
+                        while (bytes >= 0) {
+                            bos.write(buffer, 0, bytes)
+                            bos.flush()
+                            bytes = bis.read(buffer)
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
 

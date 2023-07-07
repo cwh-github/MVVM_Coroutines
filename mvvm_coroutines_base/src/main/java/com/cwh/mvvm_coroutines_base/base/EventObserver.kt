@@ -1,8 +1,6 @@
 package com.cwh.mvvm_coroutines_base.base
 
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.*
 import androidx.lifecycle.Observer
 import java.util.*
 
@@ -12,8 +10,9 @@ import java.util.*
  * Author: cwh
  */
 
+typealias MutableEventLiveData<T> = MutableLiveData<Event<T>>
 
-class EventObserver<T>( private var onEventUnHandleContent:(T)->Unit):Observer<Event<T>>{
+class EventObserver<T>(private var onEventUnHandleContent: (T) -> Unit) : Observer<Event<T>> {
     override fun onChanged(t: Event<T>?) {
         t?.getContentIfNotHandled()?.let {
             onEventUnHandleContent(it)
@@ -22,12 +21,14 @@ class EventObserver<T>( private var onEventUnHandleContent:(T)->Unit):Observer<E
 }
 
 
-inline fun <T> LiveData<Event<T>>.observerEvent(owner: LifecycleOwner,
-                                         crossinline onEventUnHandleContent:(T)->Unit ){
-    observe(owner, Observer {event->
+inline fun <T> LiveData<Event<T>>.observerEvent(
+    owner: LifecycleOwner,
+    crossinline onEventUnHandleContent: (T) -> Unit
+) {
+    observe(owner, Observer { event ->
         event.getContentIfNotHandled()?.let {
-           onEventUnHandleContent(it)
-       }
+            onEventUnHandleContent(it)
+        }
     })
 }
 
@@ -37,19 +38,20 @@ inline fun <T> LiveData<Event<T>>.observerEvent(owner: LifecycleOwner,
  * 这种情况需要比较value是否发生改变，若发生改变，则通知
  * 更新
  */
-fun <T> LiveData<T>.getDistinct():LiveData<T>{
-    val mediatorLiveData=MediatorLiveData<T>()
-    mediatorLiveData.addSource(this,object :Observer<T>{
-        private var initialized=false
-        private var lastObj:T?=null
+fun <T> LiveData<T>.getDistinct(): LiveData<T> {
+    val mediatorLiveData = MediatorLiveData<T>()
+    mediatorLiveData.addSource(this, object : Observer<T> {
+        private var initialized = false
+        private var lastObj: T? = null
         override fun onChanged(t: T) {
-            if(!initialized){
-                initialized=true
-                lastObj=t
+            if (!initialized) {
+                initialized = true
+                lastObj = t
                 mediatorLiveData.postValue(t)
-            }else if((t==null && lastObj!=null) ||
-                    t!=lastObj){
-                lastObj=t
+            } else if ((t == null && lastObj != null) ||
+                t != lastObj
+            ) {
+                lastObj = t
                 mediatorLiveData.postValue(t)
             }
         }

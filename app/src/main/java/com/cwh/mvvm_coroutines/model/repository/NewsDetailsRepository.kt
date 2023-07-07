@@ -140,10 +140,10 @@ class NewsDetailsRepository : BaseRepository<RemoteNewsDetailsRepository,
 
     override suspend fun newsDetails(id: Long): NewsDetails? {
         val content=local.newsDetails(id)
-        if(content==null || content?.content.isNullOrEmpty()){
-            return remote.newsDetails(id)
+        return if(content==null || content?.content.isNullOrEmpty()){
+            remote.newsDetails(id)
         }else{
-            return content
+            content
         }
     }
 
